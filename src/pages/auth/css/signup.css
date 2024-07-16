@@ -1,0 +1,21 @@
+.card {
+    background-color: lavender;
+}
+.btn-submit {
+    background-color: rgb(0, 128, 128);
+    outline: unset;
+    border: unset;
+    border-radius: 10px;
+    color: white;
+    font-weight: 500;
+    padding: 5px 0px;
+    width: 75%;
+}
+.btn-submit:hover {
+    background-color: rgb(0, 100, 100);
+}
+.main-bg {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(255, 255, 255, 0.4)) ,url('../../assets/images/Hospital-Management-Software.jpg');
+    background-position: center;
+    background-size: cover;
+}
