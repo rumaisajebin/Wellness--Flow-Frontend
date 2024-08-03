@@ -11,7 +11,7 @@ const API = axios.create({
 
 export const signup = async (userData) => {
   try {
-    const response = await API.post('account/signup', userData);
+    const response = await API.post('account/signup/', userData);
     Swal.fire({
       title: "Account created successfully",
       text: "Your acount created successfully. \nPlease verify your account by the link that we send to your mail!",
@@ -31,7 +31,9 @@ export const signup = async (userData) => {
 
 export const login = async (credentials) => {
   try {
-    const response = await API.post('account/signin', credentials);
+    const response = await API.post('account/signin/', credentials);
+    console.log(response.data);
+
     Swal.fire({
       title: "User logged successfully",
       icon: "success",
@@ -44,15 +46,24 @@ export const login = async (credentials) => {
     return response.data;
   } catch (error) {
     console.log(error.response.data);
+    Swal.fire({
+      text: error.response.data.detail,
+      showConfirmButton: false,
+      timerProgressBar: true,
+      timer: 5000,
+      icon: "warning",
+      position: "center",
+      toast: true,
+    });
     throw error.response.data;
   }
 };
 
 export const fetchProfile = async (token) => {
   try {
-    const response = await API.get('account/profile', {
+    const response = await API.get('account/profile/', {
       headers: {
-        Authorization: `Berear ${token}`
+        Authorization: `Bearer ${token}`
       }
     });
     console.log(response.data);
@@ -63,9 +74,14 @@ export const fetchProfile = async (token) => {
   }
 };
 
-export const updateProfile = async (userData) => {
+export const updateProfile = async (userData, token) => {
   try {
-    const response = await API.put('account/profile', userData);
+    console.log("UPDATE", userData, token);
+    const response = await API.put('account/profile/', userData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {

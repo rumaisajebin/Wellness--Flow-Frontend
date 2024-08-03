@@ -1,50 +1,79 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchDoctors } from "../doctor/services/doctoSlice";
-import { getUserIdFromLocalStorage } from "../../utils/auth";
-import Layout from '../../component/Layout';
+import React, { useEffect, useState } from "react";
+import { fetchAllDoctors } from "./api/Api";
+import { useSelector } from "react-redux";
+import { Button, Table } from "reactstrap";
+import Swal from "sweetalert2";
+import AdminLayout from "../../component/AdminLayout";
+import { useNavigate } from "react-router-dom";
 
 const ListDoctors = () => {
-  const dispatch = useDispatch();
-  const doctors = useSelector(state => state.doctor.doctors || []);
-  const status = useSelector(state => state.doctor.status);
-  const error = useSelector(state => state.doctor.error);
-  const token = JSON.parse(localStorage.getItem("access").replace(/\\\"/g, '"'));
+  const [doctors, setDoctors] = useState([]);
+  const { access } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) {
-      dispatch(fetchDoctors(token));
-    }
-  }, [dispatch, token]);
+    const getDoctors = async () => {
+      try {
+        const response = await fetchAllDoctors(access);
+        setDoctors(response);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Failed to fetch doctor profiles.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    };
 
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
+    getDoctors();
+  }, [access]);
 
-  if (status === 'failed') {
-    return <div>Error: {error}</div>;
-  }
+  const handleViewDetails = (id) => {
+    navigate(`/admin/doctor-view/${id}`);
+  };
 
   return (
-    <Layout>
-      <div className='display-block'>
-      <h1>List of Doctors</h1>
-      {doctors.length === 0 ? (
-        <p>No doctors found.</p>
-      ) : (
-        <ul>
-          {doctors.map(doctor => (
-            <li key={doctor.id}>
-              <strong>{doctor.user.email}</strong> - {doctor.specialization}
-              <strong>{doctor.full_name}</strong> - {doctor.specialization}
-              {/* <button>verify</button> */}
-            </li>
-          ))}
-        </ul>
-      )}
+    <AdminLayout>
+      <div className="container mt-5">
+        <h2 className="mb-4">List of Doctors</h2>
+        <Table bordered hover className="table-rounded">
+          <thead className="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Phone Number</th>
+              <th>Specialization</th>
+              <th>Workplace Name</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody className="table-white">
+            {doctors.map((doctor) => (
+              <tr key={doctor.id}>
+                <td>{doctor.id || "-"}</td>
+                <td>{doctor.user?.username || "-"}</td>
+                <td>{doctor.phone_number || "-"}</td>
+                <td>{doctor.specialization || "-"}</td>
+                <td>{doctor.workplace_name || "-"}</td>
+                <td>{doctor.is_profile_verify || "-"}</td>
+                <td>
+                  <span
+                    className="text-dark fw-bold"
+                    style={{ cursor: "pointer", color: "black" }}
+                    onClick={() => handleViewDetails(doctor.id)}
+                  >
+                    View
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
-
 export default ListDoctors;

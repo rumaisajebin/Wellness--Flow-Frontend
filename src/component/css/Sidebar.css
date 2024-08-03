@@ -1,0 +1,10 @@
+.sidebar {
+    background-color: #f8f9fa;
+    height: auto;
+  }
+
+  /* src/components/css/Sidebar.css */
+
+.sidebar-nav .nav-item {
+  margin-bottom: 0.5rem; /* Adjust the spacing as needed */
+}

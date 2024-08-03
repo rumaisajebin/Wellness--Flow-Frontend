@@ -4,20 +4,23 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
 
-const Layout = ({ children }) => {
+const DoctorLayout = ({ children }) => {
   return (
     <div className="d-flex flex-column vh-100">
       <Header />
-
-      {/* <div className="col-10"> */}
+      <div className="row">
+        <div className="col-2">
+          <Sidebar />
+        </div>
+        <div className="col-10">
           <main className="d-flex justify-content-center align-items-center text-center flex-grow-1">
             {children}
           </main>
-        {/* </div> */}
-
+        </div>
+      </div>
       <Footer />
     </div>
   );
 };
 
-export default Layout;
+export default DoctorLayout;

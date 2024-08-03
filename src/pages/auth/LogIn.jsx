@@ -26,22 +26,58 @@ const LogIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const response = await dispatch(loginUser(formData)).unwrap();
-      console.log(response);
       if (response.role === "patient") {
-        navigate("/");
-      } else if(response.role === "doctor") {
-        navigate('/doctor')
-      }
-      if(response.role === '') {
-        navigate("/admin")
+        navigate("/patient");
+      } else if (response.role === "doctor") {
+        if (response.profile_complete) {
+          navigate("/doctor");
+        } else {
+          navigate("/doctor/completion");
+        }
+      } else if (response.role === "") {
+        navigate("/admin");
       }
     } catch (error) {
       console.error("Error logging in", error);
-      alert("Error logging in");
+      // if (error.detail === "Invalid credentials.") {
+      //   alert("Incorrect username or password. Please try again.");
+      // } else if (error.detail === "Account is inactive.") {
+      //   alert("Your account is inactive. Please contact support.");
+      // } else if (
+      //   error.detail === "Email is not verified. Please check your email."
+      // ) {
+      //   alert(
+      //     "Your email is not verified. Please check your email for the verification link."
+      //   );
+      // } else {
+      //   alert("Error logging in. Please try again later.");
+      // }
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+
+  //     const response = await dispatch(loginUser(formData)).unwrap();
+  //     if (response.role === "patient") {
+  //       navigate("/patient");
+  //     } else if(response.role === "doctor") {
+  //       if (response.profile_complete) {
+  //         navigate('/doctor')
+  //       } else {
+  //         navigate('/doctor/completion')
+  //       }
+  //     }
+  //     if(response.role === '') {
+  //       navigate("/admin")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error logging in", error);
+  //     alert("Error logging in");
+  //   }
+  // };
 
   return (
     <div className="main-bg">
@@ -68,7 +104,13 @@ const LogIn = () => {
             />
 
             {loading && <p>Loading...</p>}
-            {error && <p className="text-danger">{error}</p>}
+            {error && (
+              <p className="text-danger">
+                {Array.isArray(error.detail)
+                  ? error.detail.join(" ")
+                  : error.detail || "Login failed. Please try again."}
+              </p>
+            )}
 
             <div className="d-flex justify-content-center m-2">
               <button type="submit" className="btn-submit">
@@ -79,10 +121,7 @@ const LogIn = () => {
 
           <p className="text-center">
             Already have an account?{" "}
-            <Link
-              className="text-decoration-none text-primary"
-              to={"/SignUp"}
-            >
+            <Link className="text-decoration-none text-primary" to={"/SignUp"}>
               Register now
             </Link>
           </p>

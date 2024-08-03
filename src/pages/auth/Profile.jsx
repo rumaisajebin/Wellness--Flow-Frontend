@@ -11,7 +11,7 @@ const Profile = () => {
   }, [dispatch]);
 
   const handleUpdate = (updatedData) => {
-    dispatch(ProfileUpdate(updatedData));
+    dispatch(ProfileUpdate({updatedData, access}));
   };
 
   if (status === 'loading') {
@@ -25,8 +25,8 @@ const Profile = () => {
   return (
     <div>
       <h2>Profile Details</h2>
-      <p>Username: {user.username}</p>
-      <p>Email: {user.email}</p>
+      <p>Username: {user.user?.username}</p>
+      <p>Email: {user.user?.email}</p>
       {/* Render additional profile fields as needed */}
       <button onClick={() => handleUpdate({ username: 'Updated Username' })}>
         Update Username

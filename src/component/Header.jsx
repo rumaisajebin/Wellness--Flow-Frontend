@@ -1,12 +1,20 @@
 // src/components/Header.js
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../pages/auth/services/slice/authSlice";
 
 const Header = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch()
+  const navigate = useNavigate();
+
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/signin");
+  };
+
   return (
     <header
       className="expand-lg  text-white"
@@ -35,7 +43,11 @@ const Header = () => {
 
               {user ? (
                 <li className="nav-item">
-                  <span className="nav-link text-white" style={{cursor: "pointer"}} onClick={() => dispatch(logout())}>
+                   <span
+                    className="nav-link text-white"
+                    style={{ cursor: "pointer" }}
+                    onClick={handleLogout}
+                  >
                     Logout
                   </span>
                 </li>

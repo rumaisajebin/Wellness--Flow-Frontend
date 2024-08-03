@@ -1,26 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { signup as signupAPI, login as loginAPI, fetchProfile as ProfileAPI, updateProfile as ProfileUpdateAPI } from "../../services/Api";
-import axios from "axios";
+import {
+  signup as signupAPI,
+  login as loginAPI,
+  fetchProfile as ProfileAPI,
+  updateProfile as ProfileUpdateAPI,
+} from "../../services/Api";
 import { json } from "react-router-dom";
 
 const initialState = {
   username: "",
   email: "",
-  role: "patient",
   password: "",
   status: "idle",
   error: null,
   user: JSON.parse(localStorage.getItem("user")) || null,
   access: JSON.parse(localStorage.getItem("access")) || null,
   refresh: JSON.parse(localStorage.getItem("refresh")) || null,
+  isLogged: JSON.parse(localStorage.getItem("isLogged") || false),
+  role: JSON.parse(localStorage.getItem("role") || null),
 };
 
 // Async action to fetch user profile
 export const ProfileSelect = createAsyncThunk(
   "auth/fetchProfile",
-  async (_, thunkAPI) => {
+  async (token, thunkAPI) => {
     try {
-      const response = await ProfileAPI();
+      const response = await ProfileAPI(token);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -31,9 +36,9 @@ export const ProfileSelect = createAsyncThunk(
 // Async action to update user profile
 export const ProfileUpdate = createAsyncThunk(
   "auth/updateProfile",
-  async (userData, thunkAPI) => {
+  async ({ updatedData, access }, thunkAPI) => {
     try {
-      const response = await ProfileUpdateAPI(userData);
+      const response = await ProfileUpdateAPI(updatedData, access);
       console.log(response);
       return response;
     } catch (error) {
@@ -50,7 +55,7 @@ export const signupUser = createAsyncThunk(
       const response = await signupAPI(userData);
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -62,7 +67,8 @@ export const loginUser = createAsyncThunk(
       const response = await loginAPI(credentials);
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -79,6 +85,8 @@ const authSlice = createSlice({
       state.user = null;
       state.access = null;
       state.refresh = null;
+      state.isLogged = false;
+      state.role = null;
       localStorage.clear();
     },
   },
@@ -102,15 +110,19 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload.role ? action.payload.role : "admin";
+        state.user = action.payload.role !== "" ? action.payload.role : "admin";
         state.access = action.payload.access;
         state.refresh = action.payload.refresh;
+        state.isLogged = true;
+        state.role = action.payload.role !== "" ? action.payload.role : "admin";
         localStorage.setItem(
           "user",
           JSON.stringify(action.payload.role ? action.payload.role : "admin")
         );
         localStorage.setItem("access", JSON.stringify(action.payload.access));
         localStorage.setItem("refresh", JSON.stringify(action.payload.refresh));
+        localStorage.setItem("isLogged", JSON.stringify(state.isLogged));
+        localStorage.setItem("role", JSON.stringify(state.role));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
