@@ -17,6 +17,11 @@ const Sidebar = () => {
           </Link>
         </li>
         <li className="nav-item">
+          <Link to="/doctor/appoinment" className="nav-link ">
+            Appoinment
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link to="/" className="nav-link danger">
             Logout
           </Link>

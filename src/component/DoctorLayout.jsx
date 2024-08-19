@@ -8,7 +8,7 @@ const DoctorLayout = ({ children }) => {
   return (
     <div className="d-flex flex-column vh-100">
       <Header />
-      <div className="row">
+      <div className="row m-0">
         <div className="col-2">
           <Sidebar />
         </div>

@@ -15,6 +15,9 @@ import PatientHome from "./pages/patient/PatientHome";
 import ListPatients from "./pages/admin/ListPatients";
 import PatientDetailView from "./pages/admin/PatientDetailView";
 import { useSelector } from "react-redux";
+import DoctorAppointments from "./pages/doctor/DoctorAppoinments";
+import ProfileUpdate from "./pages/patient/ProfileUpdate";
+import PatientProfileCreate from "./pages/patient/PatientProfileCreate";
 
 const App = () => {
   const {isLogged, role} = useSelector((state) => state.auth)
@@ -28,11 +31,14 @@ const App = () => {
 
           <Route exact path="/patient" element={isLogged && role === 'patient' ? <PatientHome /> : <Navigate to={'/signin'} />} />
           <Route exact path="/patient/profile" element={isLogged && role === 'patient' ? <ProfileDetail /> : <Navigate to={'/signin'} />} />
+          <Route exact path="/patient/profile/update" element={isLogged && role === 'patient' ? <ProfileUpdate /> : <Navigate to={'/signin'} />} />
+          <Route exact path="/patient/profile/create" element={isLogged && role === 'patient' ? <PatientProfileCreate /> : <Navigate to={'/signin'} />} />
 
           <Route exact path="/doctor" element={<DoctorHome />} />
           <Route exact path="/doctor/completion" element={<DoctorVerificationForm />} />
           <Route exact path="/doctor/profile" element={<DoctorProfile />} />
           <Route exact path="/doctor/profile/update" element={<DoctorUpdate />} />
+          <Route exact path="/doctor/appoinment" element={<DoctorAppointments />} />
 
           <Route exact path="/admin"  element={isLogged && role === 'admin' ? <AdminHome /> : <Navigate to={'/signin'} />}/>
           <Route exact path="/admin/list_patients" element={isLogged && role === 'admin' ? <ListPatients /> : <Navigate to={'/signin'} />} />

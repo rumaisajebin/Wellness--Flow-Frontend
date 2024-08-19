@@ -5,7 +5,6 @@ import {
   fetchProfile as ProfileAPI,
   updateProfile as ProfileUpdateAPI,
 } from "../../services/Api";
-import { json } from "react-router-dom";
 
 const initialState = {
   username: "",

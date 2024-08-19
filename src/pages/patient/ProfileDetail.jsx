@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { getProfile, getProfileId } from "./serivices/api"; // Adjust the path as needed
 import { Card, CardBody, Row, Col, Button } from "reactstrap";
 import Layout from "../../component/Layout";
+import PatientLayout from "../../component/PatientLayout";
 
 const ProfileDetail = () => {
   const token = useSelector((state) => state.auth.access);
@@ -45,7 +46,7 @@ const ProfileDetail = () => {
   if (!profile) return <div>No profile data available</div>;
 
   return (
-    <Layout>
+    <PatientLayout>
       <div className="container mt-5">
         <Card>
           <CardBody>
@@ -97,7 +98,7 @@ const ProfileDetail = () => {
           </CardBody>
         </Card>
       </div>
-    </Layout>
+    </PatientLayout>
   );
 };
 
