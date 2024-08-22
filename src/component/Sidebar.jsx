@@ -22,6 +22,11 @@ const Sidebar = () => {
           </Link>
         </li>
         <li className="nav-item">
+          <Link to="/doctor/Confirm-BookingSlots" className="nav-link ">
+          Confirm BookingSlots
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link to="/" className="nav-link danger">
             Logout
           </Link>

@@ -29,9 +29,15 @@ const PatientLayout = ({ children }) => {
             profile Update
           </Link>
         </li>
+       
         <li className="nav-item">
-          <Link to="/patient/booking" className="nav-link ">
-            Booking
+          <Link to="/patient/list-doctors" className="nav-link ">
+            List Doctors
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/patient/booking-list" className="nav-link ">
+            Booking List 
           </Link>
         </li>
         <li className="nav-item">

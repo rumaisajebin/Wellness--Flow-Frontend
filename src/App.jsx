@@ -18,6 +18,12 @@ import { useSelector } from "react-redux";
 import DoctorAppointments from "./pages/doctor/DoctorAppoinments";
 import ProfileUpdate from "./pages/patient/ProfileUpdate";
 import PatientProfileCreate from "./pages/patient/PatientProfileCreate";
+import DoctorSchedule from "./pages/doctor/DoctorSchedule";
+import DoctorList from "./pages/patient/DoctorList";
+import DoctorView from "./pages/patient/DoctorView";
+import ConfirmBooking from "./pages/patient/ConfirmBooking";
+import BookingList from "./pages/patient/BookingList";
+import ConfirmBookingSlots from "./pages/doctor/ConfirmBookingSlots";
 
 const App = () => {
   const {isLogged, role} = useSelector((state) => state.auth)
@@ -33,12 +39,17 @@ const App = () => {
           <Route exact path="/patient/profile" element={isLogged && role === 'patient' ? <ProfileDetail /> : <Navigate to={'/signin'} />} />
           <Route exact path="/patient/profile/update" element={isLogged && role === 'patient' ? <ProfileUpdate /> : <Navigate to={'/signin'} />} />
           <Route exact path="/patient/profile/create" element={isLogged && role === 'patient' ? <PatientProfileCreate /> : <Navigate to={'/signin'} />} />
+          <Route exact path="/patient/list-doctors" element={isLogged && role === 'patient' ? <DoctorList /> : <Navigate to={'/signin'} />} />
+          <Route exact path="/patient/view-doctor/:doctorId" element={isLogged && role === 'patient' ? <DoctorView /> : <Navigate to={'/signin'} />} />
+          <Route exact path="/patient/confirm-booking" element={isLogged && role === "patient" ? <ConfirmBooking /> : <Navigate to={"/signin"} />} />
+          <Route exact path="/patient/booking-list" element={isLogged && role === "patient" ? <BookingList /> : <Navigate to={"/signin"} />} />
 
           <Route exact path="/doctor" element={<DoctorHome />} />
           <Route exact path="/doctor/completion" element={<DoctorVerificationForm />} />
           <Route exact path="/doctor/profile" element={<DoctorProfile />} />
           <Route exact path="/doctor/profile/update" element={<DoctorUpdate />} />
-          <Route exact path="/doctor/appoinment" element={<DoctorAppointments />} />
+          <Route exact path="/doctor/appoinment" element={<DoctorSchedule />} />
+          <Route exact path="/doctor/Confirm-BookingSlots" element={<ConfirmBookingSlots />} />
 
           <Route exact path="/admin"  element={isLogged && role === 'admin' ? <AdminHome /> : <Navigate to={'/signin'} />}/>
           <Route exact path="/admin/list_patients" element={isLogged && role === 'admin' ? <ListPatients /> : <Navigate to={'/signin'} />} />
