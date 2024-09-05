@@ -1,34 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { Form, FormGroup, Label, Input, Button, Alert } from "reactstrap";
 import Swal from "sweetalert2";
 import { isTokenValid } from "../../utils/auth";
 import { useSelector } from "react-redux";
 import { docProfile, updateDoctorDocs } from "./services/api";
 import DoctorLayout from "../../component/DoctorLayout";
+import { useForm, Controller } from "react-hook-form";
 
 const DoctorUpdate = () => {
   const navigate = useNavigate();
   const { access } = useSelector((state) => state.auth);
 
-  const [formData, setFormData] = useState({
-    phone_number: "",
-    address: "",
-    bio: "",
-    medical_license_no: "",
-    specialization: "",
-    graduation_year: "",
-    years_of_experience: "",
-    workplace_name: "",
-    profile_pic: null,
-    medical_license_certificate: null,
-    identification_document: null,
-    certificates_degrees: null,
-    curriculum_vitae: null,
-    proof_of_work: null,
-    specialization_certificates: null,
-  });
-
+  const { control, handleSubmit, setValue, formState: { errors } } = useForm();
   const [profileId, setProfileId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,23 +22,7 @@ const DoctorUpdate = () => {
       const response = await docProfile(access);
       const profile = response[0];
       setProfileId(profile.id);
-      setFormData({
-        phone_number: profile.phone_number || "",
-        address: profile.address || "",
-        bio: profile.bio || "",
-        medical_license_no: profile.medical_license_no || "",
-        specialization: profile.specialization || "",
-        graduation_year: profile.graduation_year || "",
-        years_of_experience: profile.years_of_experience || "",
-        workplace_name: profile.workplace_name || "",
-        profile_pic: profile.profile_pic || null,
-        medical_license_certificate: profile.medical_license_certificate || null,
-        identification_document: profile.identification_document || null,
-        certificates_degrees: profile.certificates_degrees || null,
-        curriculum_vitae: profile.curriculum_vitae || null,
-        proof_of_work: profile.proof_of_work || null,
-        specialization_certificates: profile.specialization_certificates || null,
-      });
+      Object.keys(profile).forEach((key) => setValue(key, profile[key] || ''));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching profile data:", error);
@@ -67,33 +35,6 @@ const DoctorUpdate = () => {
     fetchProfileData();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    // Check if the input name corresponds to one of the file fields
-    const fileFields = [
-      "profile_pic",
-      "medical_license_certificate",
-      "identification_document",
-      "certificates_degrees",
-      "curriculum_vitae",
-      "proof_of_work",
-      "specialization_certificates",
-    ];
-
-    if (fileFields.includes(name) && files && files.length > 0) {
-      setFormData({
-        ...formData,
-        [name]: files[0],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
-  };
-
   const showAlert = (title, text, icon = "info") => {
     Swal.fire({
       title: title,
@@ -103,8 +44,7 @@ const DoctorUpdate = () => {
     });
   };
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
+  const handleEditSubmit = async (data) => {
     if (!isTokenValid(access)) {
       alert("Your session has expired. Please log in again.");
       navigate("/signin");
@@ -112,8 +52,8 @@ const DoctorUpdate = () => {
     }
     try {
       const formDataObj = new FormData();
-      for (const key in formData) {
-        formDataObj.append(key, formData[key]);
+      for (const key in data) {
+        formDataObj.append(key, data[key]);
       }
 
       const response = await updateDoctorDocs(profileId, formDataObj, access);
@@ -141,276 +81,124 @@ const DoctorUpdate = () => {
 
   return (
     <DoctorLayout>
-      {/* <div className="d-flex justify-content-center align-items-center vh-100"> */}
-        <div className="w-100 border shadow-lg p-5">
-          <h1 className="text-center mb-4">Edit Your Profile</h1>
-          <Form onSubmit={handleEditSubmit} encType="multipart/form-data" className="row m-0">
-            <div className="col-md-6">
+      <div className="w-100 border shadow-lg p-5">
+        <h1 className="text-center mb-4">Edit Your Profile</h1>
+        {error && <Alert color="danger">{error}</Alert>}
+        <Form onSubmit={handleSubmit(handleEditSubmit)} encType="multipart/form-data" className="row m-0">
+          {[
+            { name: "phone_number", type: "tel", placeholder: "Enter your phone number" },
+            { name: "address", type: "textarea", placeholder: "Enter your address" },
+            { name: "bio", type: "textarea", placeholder: "Describe yourself" },
+            { name: "fee", type: "text", placeholder: "Enter your fee" },
+            { name: "medical_license_no", type: "text", placeholder: "Enter your medical license number" },
+            { name: "specialization", type: "text", placeholder: "Enter your specialization" },
+            { name: "graduation_year", type: "number", placeholder: "Enter your graduation year" },
+            { name: "years_of_experience", type: "number", placeholder: "Enter years of experience" },
+            { name: "workplace_name", type: "text", placeholder: "Enter workplace name" },
+          ].map(({ name, type, placeholder }) => (
+            <div className="col-md-6" key={name}>
               <FormGroup>
-                <Label for="phone_number">Phone Number</Label>
-                <Input
-                  type="tel"
-                  name="phone_number"
-                  id="phone_number"
-                  value={formData.phone_number}
-                  onChange={handleChange}
-                  required
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="address">Address</Label>
-                <textarea
-                  type="text"
-                  name="address"
-                  id="address"
-                  className="form-control"
-                  value={formData.address}
-                  onChange={handleChange}
-                  required
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-12">
-              <FormGroup>
-                <Label for="bio">Bio</Label>
-                <textarea
-                  placeholder="Describe yourself"
-                  type="text"
-                  name="bio"
-                  id="bio"
-                  className="form-control"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  required
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="medical_license_no">Medical License Number</Label>
-                <Input
-                  type="text"
-                  name="medical_license_no"
-                  id="medical_license_no"
-                  value={formData.medical_license_no}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="specialization">Specialization</Label>
-                <Input
-                  type="text"
-                  name="specialization"
-                  id="specialization"
-                  value={formData.specialization}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="graduation_year">Graduation Year</Label>
-                <Input
-                  type="number"
-                  name="graduation_year"
-                  id="graduation_year"
-                  value={formData.graduation_year}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="years_of_experience">Years of Experience</Label>
-                <Input
-                  type="number"
-                  name="years_of_experience"
-                  id="years_of_experience"
-                  value={formData.years_of_experience}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="workplace_name">Workplace Name</Label>
-                <Input
-                  type="text"
-                  name="workplace_name"
-                  id="workplace_name"
-                  value={formData.workplace_name}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </div>
-            {/* Profile Picture */}
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="profile_pic">Profile Picture</Label>
-                <Input
-                  type="file"
-                  name="profile_pic"
-                  id="profile_pic"
-                  onChange={handleChange}
-                  accept="image/*"
-                />
-                {formData.profile_pic &&
-                typeof formData.profile_pic === "string" ? (
-                  <div className="mt-3">
-                    <img
-                      src={formData.profile_pic}
-                      alt="Profile"
-                      style={{ maxWidth: "200px", maxHeight: "200px" }}
+                <Label for={name}>{placeholder}</Label>
+                <Controller
+                  name={name}
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      type={type}
+                      id={name}
+                      placeholder={placeholder}
+                      {...field}
                     />
-                  </div>
-                ) : null}
+                  )}
+                  rules={{ required: `Please provide your ${name.replace('_', ' ')}.` }}
+                />
+                {errors[name] && <div className="text-danger">{errors[name].message}</div>}
               </FormGroup>
             </div>
+          ))}
 
-            {/* Document fields */}
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="medical_license_certificate">
-                  Medical License Certificate
-                </Label>
-                <Input
-                  type="file"
-                  name="medical_license_certificate"
-                  id="medical_license_certificate"
-                  onChange={handleChange}
-                />
-                {formData.medical_license_certificate &&
-                  typeof formData.medical_license_certificate === "string" && (
-                    <a
-                      href={formData.medical_license_certificate}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View current medical license certificate
-                    </a>
-                  )}
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="identification_document">Identification Document</Label>
-                <Input
-                  type="file"
-                  name="identification_document"
-                  id="identification_document"
-                  onChange={handleChange}
-                />
-                {formData.identification_document &&
-                  typeof formData.identification_document === "string" && (
-                    <a
-                      href={formData.identification_document}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View current identification document
-                    </a>
-                  )}
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="certificates_degrees">Certificates & Degrees</Label>
-                <Input
-                  type="file"
-                  name="certificates_degrees"
-                  id="certificates_degrees"
-                  onChange={handleChange}
-                />
-                {formData.certificates_degrees &&
-                  typeof formData.certificates_degrees === "string" && (
-                    <a
-                      href={formData.certificates_degrees}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View current certificates & degrees
-                    </a>
-                  )}
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="curriculum_vitae">Curriculum Vitae</Label>
-                <Input
-                  type="file"
-                  name="curriculum_vitae"
-                  id="curriculum_vitae"
-                  onChange={handleChange}
-                />
-                {formData.curriculum_vitae &&
-                  typeof formData.curriculum_vitae === "string" && (
-                    <a
-                      href={formData.curriculum_vitae}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View current curriculum vitae
-                    </a>
-                  )}
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="proof_of_work">Proof of Work</Label>
-                <Input
-                  type="file"
-                  name="proof_of_work"
-                  id="proof_of_work"
-                  onChange={handleChange}
-                />
-                {formData.proof_of_work &&
-                  typeof formData.proof_of_work === "string" && (
-                    <a
-                      href={formData.proof_of_work}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View current proof of work
-                    </a>
-                  )}
-              </FormGroup>
-            </div>
-            <div className="col-md-6">
-              <FormGroup>
-                <Label for="specialization_certificates">
-                  Specialization Certificates
-                </Label>
-                <Input
-                  type="file"
-                  name="specialization_certificates"
-                  id="specialization_certificates"
-                  onChange={handleChange}
-                />
-                {formData.specialization_certificates &&
-                  typeof formData.specialization_certificates === "string" && (
-                    <a
-                      href={formData.specialization_certificates}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View current specialization certificates
-                    </a>
-                  )}
-              </FormGroup>
-            </div>
-
-            <FormGroup className="text-center mt-4">
-              <Button color="primary" type="submit" disabled={loading}>
-                Update Profile
-              </Button>
+          {/* Profile Picture */}
+          <div className="col-md-6">
+            <FormGroup>
+              <Label for="profile_pic">Profile Picture</Label>
+              <Controller
+                name="profile_pic"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <Input
+                      type="file"
+                      id="profile_pic"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        field.onChange(file);
+                      }}
+                      accept="image/*"
+                    />
+                    {field.value && typeof field.value === "string" ? (
+                      <div className="mt-3">
+                        <img
+                          src={field.value}
+                          alt="Profile"
+                          style={{ maxWidth: "200px", maxHeight: "200px" }}
+                        />
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              />
             </FormGroup>
-          </Form>
-        </div>
-      {/* </div> */}
+          </div>
+
+          {/* Document fields */}
+          {[
+            { name: "medical_license_certificate", placeholder: "Medical License Certificate (PDF)" },
+            { name: "identification_document", placeholder: "Identification Document (PDF)" },
+            { name: "certificates_degrees", placeholder: "Certificates & Degrees (PDF)" },
+            { name: "curriculum_vitae", placeholder: "Curriculum Vitae (PDF)" },
+            { name: "proof_of_work", placeholder: "Proof of Work (PDF)" },
+            { name: "specialization_certificates", placeholder: "Specialization Certificates (PDF)" },
+          ].map(({ name, placeholder }) => (
+            <div className="col-md-6" key={name}>
+              <FormGroup>
+                <Label for={name}>{placeholder}</Label>
+                <Controller
+                  name={name}
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <Input
+                        type="file"
+                        id={name}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          field.onChange(file);
+                        }}
+                        accept=".pdf"
+                      />
+                      {field.value && typeof field.value === "string" && (
+                        <a
+                          href={field.value}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View current {placeholder}
+                        </a>
+                      )}
+                    </>
+                  )}
+                />
+              </FormGroup>
+            </div>
+          ))}
+
+          <FormGroup className="text-center mt-4">
+            <Button color="primary" type="submit" disabled={loading}>
+              Update Profile
+            </Button>
+          </FormGroup>
+        </Form>
+      </div>
     </DoctorLayout>
   );
 };

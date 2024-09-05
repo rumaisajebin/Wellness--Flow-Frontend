@@ -19,7 +19,7 @@ export const signup = async (userData) => {
       timerProgressBar: true,
       toast: true,
       timer: 6000,
-      position: 'center',
+      position: 'top-end',
       showConfirmButton: false
     })
     return response.data;
@@ -40,7 +40,7 @@ export const login = async (credentials) => {
       timerProgressBar: true,
       toast: true,
       timer: 3000,
-      position: 'center',
+      position: 'top-end',
       showConfirmButton: false
     })
     return response.data;
@@ -52,7 +52,7 @@ export const login = async (credentials) => {
       timerProgressBar: true,
       timer: 5000,
       icon: "warning",
-      position: "center",
+      position: "top-end",
       toast: true,
     });
     throw error.response.data;

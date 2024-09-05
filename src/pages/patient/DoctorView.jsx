@@ -6,6 +6,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
 import PatientLayout from "../../component/PatientLayout";
+import { jwtDecode } from "jwt-decode";
+import "./css/DoctorView.css";
 
 const BASE_URL = "http://127.0.0.1:8000/patient";
 
@@ -15,9 +17,26 @@ const DoctorView = () => {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
   const [slots, setSlots] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const userId = access ? jwtDecode(access).user_id : null;
+
+  useEffect(() => {
+    if (!userId) {
+      Swal.fire({
+        title: "Access Denied",
+        text: "Only patients can book appointments.",
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/");
+      });
+    }
+  }, [userId, navigate]);
 
   useEffect(() => {
     const fetchDoctorDetails = async () => {
@@ -30,8 +49,6 @@ const DoctorView = () => {
             },
           }
         );
-        console.log(response.data);
-
         setDoctor(response.data);
       } catch (err) {
         setError(err.response?.data?.detail || "Error fetching doctor details");
@@ -48,8 +65,6 @@ const DoctorView = () => {
             },
           }
         );
-        console.log(response.data);
-
         setSlots(response.data);
       } catch (err) {
         setError(
@@ -58,54 +73,125 @@ const DoctorView = () => {
       }
     };
 
+    const fetchUserBookings = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/appoinment/bookings/?user_id=${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setBookings(response.data);
+      } catch (err) {
+        setError("Failed to fetch user bookings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (access && doctorId) {
       fetchDoctorDetails();
       fetchAvailableSlots();
+      fetchUserBookings();
     }
   }, [doctorId, access]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
 
-    const selectedDay = date.toLocaleString("en-US", { weekday: "long" });
+    if (date) {
+      const selectedDay = date.toLocaleString("en-US", { weekday: "long" });
 
+      // Find the matching slot based on the selected day
+      const matchingSlot = slots.find(
+        (slot) => slot.day.toLowerCase() === selectedDay.toLowerCase()
+      );
+
+      // Update the selected slot state
+      setSelectedSlot(matchingSlot);
+
+      // Check if there's a booking on this date
+      const isBooked = bookings.some(
+        (booking) =>
+          new Date(booking.schedule_date).toDateString() === date.toDateString()
+      );
+
+      // If a slot is found, and if there are bookings, you might want to show that in the UI
+      if (matchingSlot) {
+        // Example logic to handle bookings on the selected date
+        if (isBooked) {
+          // Handle booking status (e.g., show a warning or alert)
+        } else {
+          // Handle available slot status
+        }
+      } else {
+        // Handle case when no slot is available for the selected day
+        setError("No available slot for the selected day.");
+      }
+    } else {
+      setError("Please select a valid date.");
+    }
+  };
+
+  const getDayClassName = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date < today) {
+      return "past-unavailable-slot"; // Mark all past dates as unavailable
+    }
+
+    const dayOfWeek = date.toLocaleString("en-US", { weekday: "long" });
     const matchingSlot = slots.find(
-      (slot) => slot.day.toLowerCase() === selectedDay.toLowerCase()
+      (slot) => slot.day.toLowerCase() === dayOfWeek.toLowerCase()
     );
 
+    const userBookedSlot = bookings.find((booking) => {
+      const bookingDate = new Date(booking.schedule_date).toDateString();
+      return (
+        booking.user_id === userId &&
+        booking.schedule === matchingSlot?.id &&
+        bookingDate === date.toDateString()
+      );
+    });
+
     if (!matchingSlot) {
-      Swal.fire({
-        title: "No consultation on selected day",
-        timer: 5000,
-        position: "center",
-        showConfirmButton: false,
-        timerProgressBar: true,
-        toast: true,
-        icon: "warning",
-      });
-      setSelectedDate(null);
+      return "unavailable-slot"; // No slot available for the selected day
+    } else if (userBookedSlot) {
+      return "user-booked-slot"; // Slot booked by the current user
     }
-    // else if (matchingSlot && matchingSlot.max_patients > bookings.count) {
-    //   setError("Selected slot is fully booked. Please choose another day.");
-    // }
-    else {
-      setSelectedSlot(matchingSlot);
+
+    return "available-slot"; // Slot is available
+  };
+
+  const checkDate = async () => {
+    try {
+      console.log("reached here");
+      console.log(selectedDate, selectedSlot, doctor);
+
+      if (selectedDate) {
+        navigate("/patient/confirm-booking", {
+          state: {
+            doctor,
+            date: selectedDate,
+            slot: selectedSlot,
+          },
+        });
+      } else {
+        setError("Please select a valid slot and date.");
+      }
+    } catch (error) {
+      console.error("Error during checkDate execution:", error);
+      setError("An error occurred while checking the date. Please try again.");
     }
   };
 
-  const checkDate = () => {
-    if (selectedDate) {
-      navigate("/patient/confirm-booking", {
-        state: {
-          doctor,
-          date: selectedDate,
-          slot: selectedSlot,
-        },
-      });
-    } else {
-      setError("Please select a valid slot and date.");
-    }
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (error) {
     return <div className="alert alert-danger">{error}</div>;
@@ -164,8 +250,6 @@ const DoctorView = () => {
               <th>Start Time</th>
               <th>End Time</th>
               <th>Available Slot</th>
-              {/* <th>Current Bookings</th>
-            <th>Select</th> */}
             </tr>
           </thead>
           <tbody>
@@ -196,7 +280,44 @@ const DoctorView = () => {
             dateFormat="yyyy-MM-dd"
             minDate={new Date()}
             className="form-control"
+            dayClassName={(date) => getDayClassName(date)}
+            renderDayContents={(day, date) => {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+
+              if (date < today) {
+                return <div title="Past Date (Unavailable)">{day}</div>;
+              }
+
+              const dayOfWeek = date.toLocaleString("en-US", {
+                weekday: "long",
+              });
+              const matchingSlot = slots.find(
+                (slot) => slot.day.toLowerCase() === dayOfWeek.toLowerCase()
+              );
+
+              const userBookedSlot = bookings.find((booking) => {
+                const bookingDate = new Date(
+                  booking.schedule_date
+                ).toDateString();
+                return (
+                  booking.user_id === userId &&
+                  booking.schedule === matchingSlot?.id &&
+                  bookingDate === date.toDateString()
+                );
+              });
+
+              let status = "Available";
+              if (userBookedSlot) {
+                status = "Booked by You";
+              } else if (!matchingSlot) {
+                status = "Unavailable";
+              }
+
+              return <div title={status}>{day}</div>;
+            }}
           />
+
           <button className="btn btn-primary ms-3" onClick={checkDate}>
             Check availability
           </button>

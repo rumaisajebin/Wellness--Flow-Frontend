@@ -44,12 +44,12 @@ const App = () => {
           <Route exact path="/patient/confirm-booking" element={isLogged && role === "patient" ? <ConfirmBooking /> : <Navigate to={"/signin"} />} />
           <Route exact path="/patient/booking-list" element={isLogged && role === "patient" ? <BookingList /> : <Navigate to={"/signin"} />} />
 
-          <Route exact path="/doctor" element={<DoctorHome />} />
-          <Route exact path="/doctor/completion" element={<DoctorVerificationForm />} />
-          <Route exact path="/doctor/profile" element={<DoctorProfile />} />
-          <Route exact path="/doctor/profile/update" element={<DoctorUpdate />} />
-          <Route exact path="/doctor/appoinment" element={<DoctorSchedule />} />
-          <Route exact path="/doctor/Confirm-BookingSlots" element={<ConfirmBookingSlots />} />
+          <Route exact path="/doctor" element={isLogged && role === 'doctor' ? <DoctorHome />: <Navigate to={'/signin'} />} />
+          <Route exact path="/doctor/completion" element={isLogged && role === 'doctor' ?<DoctorVerificationForm />  : <Navigate to={'/signin'}  />} />
+          <Route exact path="/doctor/profile" element={isLogged && role === 'doctor' ?<DoctorProfile />: <Navigate to={'/signin'}  />} />
+          <Route exact path="/doctor/profile/update" element={isLogged && role === 'doctor' ?<DoctorUpdate />  : <Navigate to={'/signin'}  />} />
+          <Route exact path="/doctor/appoinment" element={isLogged && role === 'doctor' ?<DoctorSchedule /> : <Navigate to={'/signin'}  />} />
+          <Route exact path="/doctor/Confirm-BookingSlots" element={isLogged && role === 'doctor' ?<ConfirmBookingSlots /> : <Navigate to={'/signin'}  />} />
 
           <Route exact path="/admin"  element={isLogged && role === 'admin' ? <AdminHome /> : <Navigate to={'/signin'} />}/>
           <Route exact path="/admin/list_patients" element={isLogged && role === 'admin' ? <ListPatients /> : <Navigate to={'/signin'} />} />

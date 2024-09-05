@@ -15,15 +15,15 @@ const PatientLayout = ({ children }) => {
         <div className="d-flex flex-column p-3 bg-light vh-100">
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
-          <Link to="/patient/profile" className="nav-link active">
+          <Link to="/patient/profile" className="nav-link ">
             Profile
           </Link>
         </li>
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <Link to="/patient/profile/create" className="nav-link">
             Profile Create
           </Link>
-        </li>
+        </li> */}
         <li className="nav-item">
           <Link to="/patient/profile/update" className="nav-link ">
             profile Update

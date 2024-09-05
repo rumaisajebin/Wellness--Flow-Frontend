@@ -53,6 +53,9 @@ const DoctorProfile = () => {
                   <strong>Bio:</strong> {profile.bio}
                 </p>
                 <p>
+                  <strong>Fee:</strong> {profile.fee}
+                </p>
+                <p>
                   <strong>Medical License No:</strong>{" "}
                   {profile.medical_license_no}
                 </p>
