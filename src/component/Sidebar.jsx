@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './css/Sidebar.css'; 
+import React from "react";
+import { Link } from "react-router-dom";
+import "./css/Sidebar.css";
 
 const Sidebar = () => {
   return (
@@ -23,7 +23,12 @@ const Sidebar = () => {
         </li>
         <li className="nav-item">
           <Link to="/doctor/Confirm-BookingSlots" className="nav-link ">
-          Confirm BookingSlots
+            Confirm BookingSlots
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/doctor/transactions" className="nav-link ">
+            Transactions
           </Link>
         </li>
         <li className="nav-item">

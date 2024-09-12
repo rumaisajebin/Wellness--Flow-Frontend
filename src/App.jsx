@@ -24,6 +24,10 @@ import DoctorView from "./pages/patient/DoctorView";
 import ConfirmBooking from "./pages/patient/ConfirmBooking";
 import BookingList from "./pages/patient/BookingList";
 import ConfirmBookingSlots from "./pages/doctor/ConfirmBookingSlots";
+import PaymentSuccess from "./pages/patient/PaymentSuccess";
+import PaymentCancel from "./pages/patient/PaymentCancel ";
+import TransactionHistory from "./pages/patient/TransactionHistory";
+import DoctorTransactionHistory from "./pages/doctor/TransactionHistory";
 
 const App = () => {
   const {isLogged, role} = useSelector((state) => state.auth)
@@ -43,6 +47,9 @@ const App = () => {
           <Route exact path="/patient/view-doctor/:doctorId" element={isLogged && role === 'patient' ? <DoctorView /> : <Navigate to={'/signin'} />} />
           <Route exact path="/patient/confirm-booking" element={isLogged && role === "patient" ? <ConfirmBooking /> : <Navigate to={"/signin"} />} />
           <Route exact path="/patient/booking-list" element={isLogged && role === "patient" ? <BookingList /> : <Navigate to={"/signin"} />} />
+          <Route exact path="/patient/payment-success" element={isLogged && role === "patient" ? <PaymentSuccess /> : <Navigate to={"/signin"} />} />
+          <Route exact path="/patient/payment-cancel" element={isLogged && role === "patient" ? <PaymentCancel /> : <Navigate to={"/signin"} />} />
+          <Route exact path="/patient/transactions" element={isLogged && role === "patient" ? <TransactionHistory /> : <Navigate to={"/signin"} />} />
 
           <Route exact path="/doctor" element={isLogged && role === 'doctor' ? <DoctorHome />: <Navigate to={'/signin'} />} />
           <Route exact path="/doctor/completion" element={isLogged && role === 'doctor' ?<DoctorVerificationForm />  : <Navigate to={'/signin'}  />} />
@@ -50,6 +57,7 @@ const App = () => {
           <Route exact path="/doctor/profile/update" element={isLogged && role === 'doctor' ?<DoctorUpdate />  : <Navigate to={'/signin'}  />} />
           <Route exact path="/doctor/appoinment" element={isLogged && role === 'doctor' ?<DoctorSchedule /> : <Navigate to={'/signin'}  />} />
           <Route exact path="/doctor/Confirm-BookingSlots" element={isLogged && role === 'doctor' ?<ConfirmBookingSlots /> : <Navigate to={'/signin'}  />} />
+          <Route exact path="/doctor/transactions" element={isLogged && role === 'doctor' ?<DoctorTransactionHistory /> : <Navigate to={'/signin'}  />} />
 
           <Route exact path="/admin"  element={isLogged && role === 'admin' ? <AdminHome /> : <Navigate to={'/signin'} />}/>
           <Route exact path="/admin/list_patients" element={isLogged && role === 'admin' ? <ListPatients /> : <Navigate to={'/signin'} />} />

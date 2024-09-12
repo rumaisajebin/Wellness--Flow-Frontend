@@ -1,10 +1,3 @@
-// src/utils/textUtils.js
-
-/**
- * Capitalizes the first letter of each word in a string.
- * @param {string} str - The string to capitalize.
- * @returns {string} - The capitalized string.
- */
 export const capitalizeFirstLetter = (str) => {
     return str
       ? str
@@ -13,4 +6,4 @@ export const capitalizeFirstLetter = (str) => {
           .map(word => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ')
       : '-';
-  };
+};

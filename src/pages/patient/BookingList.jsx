@@ -4,15 +4,17 @@ import { useSelector } from "react-redux";
 import PatientLayout from "../../component/PatientLayout";
 import { Table, Button } from "reactstrap";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../../axiosConfig";
 
 const capitalizeWords = (str) => {
-  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  if (!str) return "";
+  return String(str).replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
@@ -28,7 +30,7 @@ const BookingList = () => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/appoinment/bookings/",
+          `${BASE_URL}appoinment/bookings/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -52,7 +54,11 @@ const BookingList = () => {
       const times = {};
 
       for (const booking of bookings) {
-        if (new Date(booking.schedule_date) >= new Date() && booking.status !== "completed" && booking.status !== "canceled") {
+        if (
+          new Date(booking.schedule_date) >= new Date() &&
+          booking.status !== "completed" &&
+          booking.status !== "canceled"
+        ) {
           try {
             const response = await axios.get(
               `http://127.0.0.1:8000/appoinment/bookings/expected_consulting_time/?doctor=${booking.doctor}&date=${booking.schedule_date}`,
@@ -89,11 +95,19 @@ const BookingList = () => {
         }
       );
       Swal.fire("Success", "Your booking has been canceled.", "success");
-      setBookings(bookings.map(booking => 
-        booking.id === bookingId ? { ...booking, status: "canceled" } : booking
-      ));
+      setBookings(
+        bookings.map((booking) =>
+          booking.id === bookingId
+            ? { ...booking, status: "canceled" }
+            : booking
+        )
+      );
     } catch (err) {
-      Swal.fire("Error", "Failed to cancel booking. You can only cancel 24 hours before the consultation time.", "error");
+      Swal.fire(
+        "Error",
+        "Failed to cancel booking. You can only cancel 24 hours before the consultation time.",
+        "error"
+      );
     }
   };
 
@@ -130,6 +144,7 @@ const BookingList = () => {
                 <th>Date</th>
                 <th>Consultation Type</th>
                 <th>Expected Consulting Time</th>
+                <th>Payment Status</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -138,19 +153,33 @@ const BookingList = () => {
               {upcomingBookings.map((booking, index) => (
                 <tr key={`${booking.id}-${booking.schedule_date}`}>
                   <td>{index + 1}</td>
-                  <td>{capitalizeWords(booking.doctor_username)}</td>
-                  <td>{capitalizeWords(booking.doctor_specialization)}</td>
-                  <td>{booking.doctor_email}</td>
+                  <td>
+                    {capitalizeWords(booking.doctor_username || "Unknown")}
+                  </td>
+                  <td>
+                    {capitalizeWords(
+                      booking.doctor_specialization || "Unknown"
+                    )}
+                  </td>
+                  <td>{booking.doctor_email || "Unknown"}</td>
                   <td>{formatDate(booking.schedule_date)}</td>
-                  <td>{capitalizeWords(booking.consultation_type.replace(/_/g, ' '))}</td>
+                  <td>
+                    {capitalizeWords(
+                      booking.consultation_type.replace(/_/g, " ")
+                    )}
+                  </td>
                   <td>{expectedTimes[booking.id] || "Calculating..."}</td>
+                  <td>{booking.paid ? "Paid" : "Not Paid"}</td>
                   <td>{capitalizeWords(booking.status)}</td>
                   <td>
                     {booking.status === "confirmed" && (
                       <Button
                         color="danger"
                         onClick={() => cancelBooking(booking.id)}
-                        disabled={new Date(booking.schedule_date) - new Date() < 24 * 60 * 60 * 1000}
+                        disabled={
+                          new Date(booking.schedule_date) - new Date() <
+                          24 * 60 * 60 * 1000
+                        }
                       >
                         Cancel
                       </Button>
@@ -177,6 +206,7 @@ const BookingList = () => {
                 <th>Date</th>
                 <th>Consultation Type</th>
                 <th>Status</th>
+                <th>Payment Status</th>
               </tr>
             </thead>
             <tbody>
@@ -187,8 +217,13 @@ const BookingList = () => {
                   <td>{capitalizeWords(booking.doctor_specialization)}</td>
                   <td>{booking.doctor_email}</td>
                   <td>{formatDate(booking.schedule_date)}</td>
-                  <td>{capitalizeWords(booking.consultation_type.replace(/_/g, ' '))}</td>
+                  <td>
+                    {capitalizeWords(
+                      booking.consultation_type.replace(/_/g, " ")
+                    )}
+                  </td>
                   <td>{capitalizeWords(booking.status)}</td>
+                  <td>{capitalizeWords(booking.paid)}</td>
                 </tr>
               ))}
             </tbody>
