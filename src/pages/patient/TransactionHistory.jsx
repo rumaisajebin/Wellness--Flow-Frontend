@@ -43,8 +43,9 @@ const TransactionHistory = () => {
             },
           }
         );
-        setWalletBalance(parseFloat(userResponse.data[0].user.wallet_balance) || 0);
-
+        setWalletBalance(
+          parseFloat(userResponse.data[0].user.wallet_balance) || 0
+        );
       } catch (error) {
         setError("Failed to fetch transaction history");
         Swal.fire("Error", error.message, "error");
@@ -80,7 +81,20 @@ const TransactionHistory = () => {
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ getValue }) => capitalizeFirstLetter(getValue()),
+        cell: ({ row }) => {
+          const { status, refund_status } = row.original;
+
+          if (refund_status === "refunded") {
+            return <span className="badge bg-success">Refunded</span>;
+          }
+
+          // If not refunded, show the original status
+          return status === "success" ? (
+            <span className="badge bg-success">Success</span>
+          ) : (
+            <span>Pending</span>
+          );
+        },
       },
       {
         accessorKey: "timestamp",
@@ -160,9 +174,11 @@ const TransactionHistory = () => {
     <PatientLayout>
       <div className="container">
         <div className="mb-2 d-flex justify-content-between">
-        <h3 className="my-4 text-center">Transaction History</h3>
-          <h3 className="my-4 text-center">Wallet Balance: ${walletBalance.toFixed(2)}</h3>
-          </div>
+          <h3 className="my-4 text-center">Transaction History</h3>
+          <h3 className="my-4 text-center">
+            Wallet Balance: ${walletBalance.toFixed(2)}
+          </h3>
+        </div>
         <div className="mb-3">
           <input
             type="text"

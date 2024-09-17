@@ -85,8 +85,8 @@ const BookingList = () => {
 
   const cancelBooking = async (bookingId) => {
     try {
-      await axios.patch(
-        `http://127.0.0.1:8000/appoinment/bookings/${bookingId}/update_status/`,
+      await axios.post(
+        `http://127.0.0.1:8000/appoinment/bookings/${bookingId}/cancel_booking/`,
         { status: "canceled" },
         {
           headers: {
@@ -103,6 +103,8 @@ const BookingList = () => {
         )
       );
     } catch (err) {
+    console.log(err,error);
+    
       Swal.fire(
         "Error",
         "Failed to cancel booking. You can only cancel 24 hours before the consultation time.",
