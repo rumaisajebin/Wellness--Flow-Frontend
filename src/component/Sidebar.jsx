@@ -32,6 +32,16 @@ const Sidebar = () => {
           </Link>
         </li>
         <li className="nav-item">
+          <Link to="/doctor/todayappointments" className="nav-link ">
+          Today's Appointments
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/videocall" className="nav-link ">
+            VideoCall{" "}
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link to="/" className="nav-link danger">
             Logout
           </Link>

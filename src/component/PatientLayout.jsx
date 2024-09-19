@@ -46,6 +46,11 @@ const PatientLayout = ({ children }) => {
                 </Link>
               </li>
               <li className="nav-item">
+                <Link to="/videocall" className="nav-link ">
+                  VideoCall{" "}
+                </Link>
+              </li>
+              <li className="nav-item">
                 <Link to="/" className="nav-link danger">
                   Logout
                 </Link>

@@ -28,6 +28,8 @@ import PaymentSuccess from "./pages/patient/PaymentSuccess";
 import PaymentCancel from "./pages/patient/PaymentCancel ";
 import TransactionHistory from "./pages/patient/TransactionHistory";
 import DoctorTransactionHistory from "./pages/doctor/TransactionHistory";
+import VideoCall from "./pages/doctor/VideoCall";
+import TodayAppointments from "./pages/doctor/TodayAppointments";
 
 const App = () => {
   const {isLogged, role} = useSelector((state) => state.auth)
@@ -58,6 +60,9 @@ const App = () => {
           <Route exact path="/doctor/appoinment" element={isLogged && role === 'doctor' ?<DoctorSchedule /> : <Navigate to={'/signin'}  />} />
           <Route exact path="/doctor/Confirm-BookingSlots" element={isLogged && role === 'doctor' ?<ConfirmBookingSlots /> : <Navigate to={'/signin'}  />} />
           <Route exact path="/doctor/transactions" element={isLogged && role === 'doctor' ?<DoctorTransactionHistory /> : <Navigate to={'/signin'}  />} />
+          <Route exact path="/doctor/todayappointments" element={isLogged && role === 'doctor' ?<TodayAppointments /> : <Navigate to={'/signin'}  />} />
+          {/* <Route exact path="/doctor/videocall" element={isLogged && role === 'doctor' ?<VideoCall /> : <Navigate to={'/signin'}  />} /> */}
+          <Route exact path="/videocall" element={<VideoCall />} />
 
           <Route exact path="/admin"  element={isLogged && role === 'admin' ? <AdminHome /> : <Navigate to={'/signin'} />}/>
           <Route exact path="/admin/list_patients" element={isLogged && role === 'admin' ? <ListPatients /> : <Navigate to={'/signin'} />} />
