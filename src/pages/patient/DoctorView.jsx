@@ -8,8 +8,7 @@ import Swal from "sweetalert2";
 import PatientLayout from "../../component/PatientLayout";
 import { jwtDecode } from "jwt-decode";
 import "./css/DoctorView.css";
-
-const BASE_URL = "http://127.0.0.1:8000/patient";
+import { BASE_URL } from "../../axiosConfig";
 
 const DoctorView = () => {
   const { access } = useSelector((state) => state.auth);
@@ -42,7 +41,7 @@ const DoctorView = () => {
     const fetchDoctorDetails = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/doctor-profiles/${doctorId}/`,
+          `${BASE_URL}patient/doctor-profiles/${doctorId}/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -58,7 +57,7 @@ const DoctorView = () => {
     const fetchAvailableSlots = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/doctor-profiles/${doctorId}/slots/`,
+          `${BASE_URL}patient/doctor-profiles/${doctorId}/slots/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -76,14 +75,14 @@ const DoctorView = () => {
     const fetchUserBookings = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/appoinment/bookings/?user_id=${userId}`,
+          `${BASE_URL}appoinment/bookings/?user_id=${userId}`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
             },
           }
         );
-        console.log(response.data);
+
         setBookings(response.data);
       } catch (err) {
         setError("Failed to fetch user bookings");
@@ -105,30 +104,30 @@ const DoctorView = () => {
     if (date) {
       const selectedDay = date.toLocaleString("en-US", { weekday: "long" });
 
-      // Find the matching slot based on the selected day
       const matchingSlot = slots.find(
         (slot) => slot.day.toLowerCase() === selectedDay.toLowerCase()
       );
 
-      // Update the selected slot state
-      setSelectedSlot(matchingSlot);
-
-      // Check if there's a booking on this date
-      const isBooked = bookings.some(
-        (booking) =>
-          new Date(booking.schedule_date).toDateString() === date.toDateString()
-      );
-
-      // If a slot is found, and if there are bookings, you might want to show that in the UI
       if (matchingSlot) {
-        // Example logic to handle bookings on the selected date
+        setSelectedSlot(matchingSlot);
+
+        const isBooked = bookings.some((booking) => {
+          const bookingDate = new Date(booking.schedule_date).toDateString();
+
+          return (
+            bookingDate === date.toDateString() && booking.patient_id === userId
+          );
+        });
+
         if (isBooked) {
-          // Handle booking status (e.g., show a warning or alert)
-        } else {
-          // Handle available slot status
+          Swal.fire({
+            title: "Date Already Booked",
+            text: "You have already booked an appointment on this date.",
+            icon: "warning",
+            confirmButtonText: "OK",
+          });
         }
       } else {
-        // Handle case when no slot is available for the selected day
         setError("No available slot for the selected day.");
       }
     } else {
@@ -141,7 +140,7 @@ const DoctorView = () => {
     today.setHours(0, 0, 0, 0);
 
     if (date < today) {
-      return "past-unavailable-slot"; // Mark all past dates as unavailable
+      return "past-unavailable-slot";
     }
 
     const dayOfWeek = date.toLocaleString("en-US", { weekday: "long" });
@@ -159,33 +158,58 @@ const DoctorView = () => {
     });
 
     if (!matchingSlot) {
-      return "unavailable-slot"; // No slot available for the selected day
+      return "unavailable-slot";
     } else if (userBookedSlot) {
-      return "user-booked-slot"; // Slot booked by the current user
+      return "user-booked-slot";
     }
 
-    return "available-slot"; // Slot is available
+    return "available-slot";
   };
 
   const checkDate = async () => {
     try {
-      console.log("reached here");
-      console.log(selectedDate, selectedSlot, doctor);
-
-      if (selectedDate) {
-        navigate("/patient/confirm-booking", {
-          state: {
-            doctor,
-            date: selectedDate,
-            slot: selectedSlot,
-          },
+      if (!selectedDate) {
+        return Swal.fire({
+          title: "Invalid Selection",
+          text: "Please select a valid slot and date.",
+          icon: "warning",
+          confirmButtonText: "OK",
         });
-      } else {
-        setError("Please select a valid slot and date.");
       }
+
+      const isDateBooked = bookings.some((booking) => {
+        const bookingDate = new Date(booking.schedule_date).toDateString();
+        return (
+          booking.user_id === userId &&
+          bookingDate === selectedDate.toDateString()
+        );
+      });
+
+      if (isDateBooked) {
+        return Swal.fire({
+          title: "Date Already Booked",
+          text: "You have already booked an appointment on this date.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      }
+
+      navigate("/patient/confirm-booking", {
+        state: {
+          doctor,
+          date: selectedDate,
+          slot: selectedSlot,
+        },
+      });
     } catch (error) {
       console.error("Error during checkDate execution:", error);
-      setError("An error occurred while checking the date. Please try again.");
+
+      Swal.fire({
+        title: "Error",
+        text: "An error occurred while checking the date. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -273,8 +297,8 @@ const DoctorView = () => {
         <hr />
 
         <div className="mb-5">
-          <h4>Select Date</h4>
           <DatePicker
+            placeholderText="Select Date"
             selected={selectedDate}
             onChange={handleDateChange}
             dateFormat="yyyy-MM-dd"

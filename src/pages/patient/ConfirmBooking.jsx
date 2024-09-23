@@ -92,7 +92,7 @@ const ConfirmBooking = () => {
       consultation_type: selectedType,
       paid: true,
     };
-
+    console.log("Booking data:", formData);
     try {
       // Confirm booking
       const bookingResponse = await axios.post(
@@ -146,7 +146,8 @@ const ConfirmBooking = () => {
       const errorMessage =
         err.response?.data?.non_field_errors?.[0] ||
         "Error initiating payment. Please try again.";
-      console.error("Error initiating payment:", errorMessage);
+        console.error("Error initiating payment:", err.response.data);
+
       alert(errorMessage);
     }
   };

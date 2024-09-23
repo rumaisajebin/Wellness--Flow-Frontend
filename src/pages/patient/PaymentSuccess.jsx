@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
@@ -9,16 +9,16 @@ import { useSelector } from "react-redux";
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const { access } = useSelector((state) => state.auth);
+  const hasCalledApi = useRef(false); // Create a ref to track API call
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const sessionId = queryParams.get("session_id");
     const bookingId = queryParams.get("booking_id");
-    console.log('sessionId',sessionId,bookingId);
-    
-    if (sessionId && bookingId) {
-      console.log(bookingId,',,,,,,,,,,,,,,,,,,,,,,,,,,');
-      
+
+    if (sessionId && bookingId && !hasCalledApi.current) { // Check if API was already called
+      hasCalledApi.current = true; // Set ref to true to prevent further calls
+
       axios
         .get(
           `${BASE_URL}payment/payments/payment_success/?session_id=${sessionId}&booking_id=${bookingId}`,

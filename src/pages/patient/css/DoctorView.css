@@ -3,10 +3,11 @@
     color: white;
   }
   
-  .booked-slot {
-    background-color: green;
-    color: white;
-  }
+  .user-booked-slot {
+    background-color: green; /* or any other styling you prefer */
+    color: white; /* for text readability */
+}
+
   
 
 .pending-slot {

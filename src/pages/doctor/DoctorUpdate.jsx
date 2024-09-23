@@ -86,6 +86,7 @@ const DoctorUpdate = () => {
         {error && <Alert color="danger">{error}</Alert>}
         <Form onSubmit={handleSubmit(handleEditSubmit)} encType="multipart/form-data" className="row m-0">
           {[
+            { name: "full_name", type: "text", placeholder: "Enter your Full Name" },
             { name: "phone_number", type: "tel", placeholder: "Enter your phone number" },
             { name: "address", type: "textarea", placeholder: "Enter your address" },
             { name: "bio", type: "textarea", placeholder: "Describe yourself" },
