@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import PatientLayout from "../../component/PatientLayout";
-import { Table, Button } from "reactstrap";
+import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, FormGroup, Label } from "reactstrap";
 import Swal from "sweetalert2";
 import { BASE_URL } from "../../axiosConfig";
+import LoadingAnimation from "../../component/LoadingAnimation";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Import jwt-decode
 
 const capitalizeWords = (str) => {
   if (!str) return "";
@@ -25,28 +28,48 @@ const BookingList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expectedTimes, setExpectedTimes] = useState({});
+  const [userId, setUserId] = useState(null);
+  const [reasonModal, setReasonModal] = useState(false); // Modal for reason input
+  const [cancelReason, setCancelReason] = useState(""); // State to store cancel reason
+  const [cancelBookingId, setCancelBookingId] = useState(null); // Track which booking is being canceled
+  const navigate = useNavigate();
+
+  // Decode the JWT token to get the user ID
+  useEffect(() => {
+    if (access) {
+      try {
+        const decodedToken = jwtDecode(access);
+        setUserId(decodedToken.user_id);
+        console.log("Decoded userId:", decodedToken.user_id);
+      } catch (e) {
+        setError("Invalid token");
+        console.error("Token decoding error:", e);
+      }
+    } else {
+      setError("No access token provided");
+    }
+  }, [access]);
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}appoinment/bookings/`,
-          {
-            headers: {
-              Authorization: `Bearer ${access}`,
-            },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}appoinment/bookings/`, {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        });
         setBookings(response.data);
-        console.log(response.data);
       } catch (err) {
         setError("Failed to fetch bookings");
+        console.error("Fetch bookings error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBookings();
+    if (access) {
+      fetchBookings();
+    }
   }, [access]);
 
   useEffect(() => {
@@ -61,7 +84,7 @@ const BookingList = () => {
         ) {
           try {
             const response = await axios.get(
-              `http://127.0.0.1:8000/appoinment/bookings/expected_consulting_time/?doctor=${booking.doctor}&date=${booking.schedule_date}`,
+              `${BASE_URL}appoinment/bookings/expected_consulting_time/?doctor=${booking.doctor}&date=${booking.schedule_date}`,
               {
                 headers: {
                   Authorization: `Bearer ${access}`,
@@ -83,11 +106,16 @@ const BookingList = () => {
     }
   }, [bookings, access]);
 
-  const cancelBooking = async (bookingId) => {
+  const toggleReasonModal = (bookingId) => {
+    setCancelBookingId(bookingId);
+    setReasonModal(!reasonModal); // Toggle modal visibility
+  };
+
+  const submitCancelBooking = async () => {
     try {
       await axios.post(
-        `http://127.0.0.1:8000/appoinment/bookings/${bookingId}/cancel_booking/`,
-        { status: "canceled" },
+        `${BASE_URL}appoinment/bookings/${cancelBookingId}/cancel_booking/`,
+        { status: "canceled", cancel_reason: cancelReason }, // Pass the cancel reason
         {
           headers: {
             Authorization: `Bearer ${access}`,
@@ -97,17 +125,32 @@ const BookingList = () => {
       Swal.fire("Success", "Your booking has been canceled.", "success");
       setBookings(
         bookings.map((booking) =>
-          booking.id === bookingId
+          booking.id === cancelBookingId
             ? { ...booking, status: "canceled" }
             : booking
         )
       );
     } catch (err) {
-    console.log(err,error);
-    
+      console.log(err);
       Swal.fire(
         "Error",
         "Failed to cancel booking. You can only cancel 24 hours before the consultation time.",
+        "error"
+      );
+    } finally {
+      toggleReasonModal(); // Close modal after action
+      setCancelReason(""); // Reset reason input
+    }
+  };
+
+  const initiateChat = (doctorId) => {
+    if (userId && doctorId) {
+      navigate(`/chat?doctorId=${doctorId}&patientId=${userId}`);
+    } else {
+      console.error("User ID or Doctor ID is missing.");
+      Swal.fire(
+        "Error",
+        "Unable to initiate chat due to missing details.",
         "error"
       );
     }
@@ -127,7 +170,7 @@ const BookingList = () => {
       booking.status === "canceled"
   );
 
-  if (loading) return <p>Loading bookings...</p>;
+  if (loading) return <LoadingAnimation />;
   if (error) return <p>{error}</p>;
 
   return (
@@ -155,14 +198,8 @@ const BookingList = () => {
               {upcomingBookings.map((booking, index) => (
                 <tr key={`${booking.id}-${booking.schedule_date}`}>
                   <td>{index + 1}</td>
-                  <td>
-                    {capitalizeWords(booking.doctor_username || "Unknown")}
-                  </td>
-                  <td>
-                    {capitalizeWords(
-                      booking.doctor_specialization || "Unknown"
-                    )}
-                  </td>
+                  <td>{capitalizeWords(booking.doctor_username || "Unknown")}</td>
+                  <td>{capitalizeWords(booking.doctor_specialization || "Unknown")}</td>
                   <td>{booking.doctor_email || "Unknown"}</td>
                   <td>{formatDate(booking.schedule_date)}</td>
                   <td>
@@ -175,16 +212,25 @@ const BookingList = () => {
                   <td>{capitalizeWords(booking.status)}</td>
                   <td>
                     {booking.status === "confirmed" && (
-                      <Button
-                        color="danger"
-                        onClick={() => cancelBooking(booking.id)}
-                        disabled={
-                          new Date(booking.schedule_date) - new Date() <
-                          24 * 60 * 60 * 1000
-                        }
-                      >
-                        Cancel
-                      </Button>
+                      <>
+                        <Button
+                          color="danger"
+                          onClick={() => toggleReasonModal(booking.id)}
+                          disabled={
+                            new Date(booking.schedule_date) - new Date() <
+                            24 * 60 * 60 * 1000
+                          }
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          color="primary"
+                          onClick={() => initiateChat(booking.doctor_id)}
+                          className="ml-2"
+                        >
+                          Chat with Doctor
+                        </Button>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -225,7 +271,7 @@ const BookingList = () => {
                     )}
                   </td>
                   <td>{capitalizeWords(booking.status)}</td>
-                  <td>{capitalizeWords(booking.paid)}</td>
+                  <td>{booking.paid ? "Paid" : "Not Paid"}</td>
                 </tr>
               ))}
             </tbody>
@@ -233,6 +279,31 @@ const BookingList = () => {
         ) : (
           <p>No past bookings found.</p>
         )}
+
+        {/* Cancel Reason Modal */}
+        <Modal isOpen={reasonModal} toggle={toggleReasonModal}>
+          <ModalHeader toggle={toggleReasonModal}>Cancel Booking</ModalHeader>
+          <ModalBody>
+            <FormGroup>
+              <Label for="cancelReason">Reason for canceling:</Label>
+              <Input
+                type="textarea"
+                id="cancelReason"
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Please provide a reason for canceling this booking"
+              />
+            </FormGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={submitCancelBooking}>
+              Submit
+            </Button>
+            <Button color="secondary" onClick={toggleReasonModal}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     </PatientLayout>
   );

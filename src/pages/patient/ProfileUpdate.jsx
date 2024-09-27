@@ -4,6 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { getProfile, getProfileId, updateProfile } from "./serivices/api"; // Adjust the path as needed
 import { Card, CardBody, Row, Col, Button, FormGroup, Label, Input, Alert } from "reactstrap";
 import PatientLayout from "../../component/PatientLayout";
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 const ProfileUpdate = () => {
   const token = useSelector((state) => state.auth.access);
@@ -72,7 +73,9 @@ const ProfileUpdate = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <LoadingAnimation /> 
+);
   if (error) return <div>{error}</div>;
 
   return (

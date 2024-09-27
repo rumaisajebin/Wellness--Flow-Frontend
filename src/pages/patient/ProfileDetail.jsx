@@ -4,6 +4,7 @@ import { getProfile, getProfileId } from "./serivices/api"; // Adjust the path a
 import { Card, CardBody, Row, Col, Button } from "reactstrap";
 import Layout from "../../component/Layout";
 import PatientLayout from "../../component/PatientLayout";
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 const ProfileDetail = () => {
   const token = useSelector((state) => state.auth.access);
@@ -41,7 +42,9 @@ const ProfileDetail = () => {
     }
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <LoadingAnimation /> 
+);
   if (error) return <div>{error}</div>;
   if (!profile) return <div>No profile data available</div>;
 

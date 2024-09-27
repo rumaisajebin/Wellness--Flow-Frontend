@@ -2,16 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
 import PatientLayout from "../../component/PatientLayout";
 import { jwtDecode } from "jwt-decode";
+import { BASE_URL, PAYMENT_URL, stripePromise } from "../../axiosConfig";
 
-const BASE_URL = "http://127.0.0.1:8000/appoinment";
-const PAYMENT_URL =
-  "http://127.0.0.1:8000/payment/payments/create_checkout_session/";
-const stripePromise = loadStripe(
-  "pk_test_51PvfpaGFFuSDNKGDBkvHUBNNM8KISveSjN0cjPBFYX7OqoxJWqnw3bORe91cYA6qPF67whAs8lZVZsVHB0DuurAU00VkoKG4zC"
-); // Replace with your actual Stripe public key
 
 const ConfirmBooking = () => {
   const location = useLocation();
@@ -46,7 +40,7 @@ const ConfirmBooking = () => {
     const fetchExpectedConsultingTime = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/bookings/expected_consulting_time/?doctor=${doctor.user.id}&date=${formattedDate}`,
+          `${BASE_URL}appoinment/bookings/expected_consulting_time/?doctor=${doctor.user.id}&date=${formattedDate}`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -63,7 +57,7 @@ const ConfirmBooking = () => {
     const fetchWalletBalance = async () => {
       try {
         const userResponse = await axios.get(
-          `http://127.0.0.1:8000/patient/patient-profiles/`,
+          `${BASE_URL}patient/patient-profiles/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -96,7 +90,7 @@ const ConfirmBooking = () => {
     try {
       // Confirm booking
       const bookingResponse = await axios.post(
-        `${BASE_URL}/bookings/`,
+        `${BASE_URL}appoinment/bookings/`,
         formData,
         {
           headers: {

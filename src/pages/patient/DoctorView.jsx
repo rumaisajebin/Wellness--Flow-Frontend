@@ -9,6 +9,7 @@ import PatientLayout from "../../component/PatientLayout";
 import { jwtDecode } from "jwt-decode";
 import "./css/DoctorView.css";
 import { BASE_URL } from "../../axiosConfig";
+import { formatTimeTo12Hour } from "../../utils/textUtils";
 
 const DoctorView = () => {
   const { access } = useSelector((state) => state.auth);
@@ -212,6 +213,7 @@ const DoctorView = () => {
       });
     }
   };
+ 
 
   if (loading) {
     return <div>Loading...</div>;
@@ -281,8 +283,8 @@ const DoctorView = () => {
               slots.map((slot, index) => (
                 <tr key={index}>
                   <td>{slot.day}</td>
-                  <td>{slot.start_time}</td>
-                  <td>{slot.end_time}</td>
+                  <td>{formatTimeTo12Hour(slot.start_time)}</td>{" "}
+                  <td>{formatTimeTo12Hour(slot.end_time)}</td>{" "}
                   <td>{slot.max_patients}</td>
                 </tr>
               ))

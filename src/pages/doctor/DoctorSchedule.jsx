@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import DoctorLayout from "../../component/DoctorLayout";
-
-const BASE_URL = "http://127.0.0.1:8000/appoinment";
+import { BASE_URL } from "../../axiosConfig";
+import { formatTimeTo12Hour } from "../../utils/textUtils";
 
 const DoctorSchedule = () => {
   const { access } = useSelector((state) => state.auth);
@@ -36,7 +36,7 @@ const DoctorSchedule = () => {
     const fetchSchedules = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/DoctorSchedule/?doctor=${userId}`,
+          `${BASE_URL}appoinment/DoctorSchedule/?doctor=${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const DoctorSchedule = () => {
 
     try {
       const response = await axios.post(
-        `${BASE_URL}/DoctorSchedule/`,
+        `${BASE_URL}appoinment/DoctorSchedule/`,
         dataToSend,
         {
           headers: {
@@ -99,37 +99,7 @@ const DoctorSchedule = () => {
         });
         setError(null);
 
-        const fetchSchedules = async () => {
-          try {
-            const response = await axios.get(
-              `${BASE_URL}/DoctorSchedule/?doctor=${userId}`,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${access}`,
-                },
-              }
-            );
-            const fetchedSchedules = response.data;
-
-            setSchedules(fetchedSchedules);
-
-            const scheduledDays = fetchedSchedules.map(
-              (schedule) => schedule.day
-            );
-
-            setDaysOfWeek((prevDays) =>
-              prevDays.filter((day) => !scheduledDays.includes(day))
-            );
-          } catch (err) {
-            console.error(
-              "Error fetching schedules:",
-              err.response?.data || err
-            );
-            setError("Error fetching schedules");
-          }
-        };
-
+        // Refetch schedules after creation
         fetchSchedules();
       }
     } catch (err) {
@@ -147,19 +117,17 @@ const DoctorSchedule = () => {
       end_time: schedule.end_time,
       max_patients: schedule.max_patients,
     });
-    console.log(setScheduleData);
-    
   };
 
   const handleSave = async (id) => {
     const dataToUpdate = {
-      day: scheduleData.day,  // Include the day
+      day: scheduleData.day,
       start_time: scheduleData.start_time,
       end_time: scheduleData.end_time,
       max_patients: scheduleData.max_patients,
-      doctor: userId,  // Include the doctor ID
+      doctor: userId,
     };
-  
+
     try {
       const response = await axios.put(
         `${BASE_URL}/DoctorSchedule/${id}/`,
@@ -171,34 +139,13 @@ const DoctorSchedule = () => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         setSuccessMessage("Schedule updated successfully!");
         setEditScheduleId(null);
         setError(null);
-  
-        const fetchSchedules = async () => {
-          try {
-            const response = await axios.get(
-              `${BASE_URL}/DoctorSchedule/?doctor=${userId}`,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${access}`,
-                },
-              }
-            );
-            const fetchedSchedules = response.data;
-            setSchedules(fetchedSchedules);
-          } catch (err) {
-            console.error(
-              "Error fetching schedules:",
-              err.response?.data || err
-            );
-            setError("Error fetching schedules");
-          }
-        };
-  
+
+        // Refetch schedules after update
         fetchSchedules();
       }
     } catch (err) {
@@ -211,6 +158,8 @@ const DoctorSchedule = () => {
   const handleCancel = () => {
     setEditScheduleId(null);
   };
+
+  
 
   return (
     <DoctorLayout>
@@ -335,7 +284,7 @@ const DoctorSchedule = () => {
                             onChange={handleChange}
                           />
                         ) : (
-                          schedule.start_time
+                          formatTimeTo12Hour(schedule.start_time)
                         )}
                       </td>
                       <td>
@@ -348,7 +297,7 @@ const DoctorSchedule = () => {
                             onChange={handleChange}
                           />
                         ) : (
-                          schedule.end_time
+                          formatTimeTo12Hour(schedule.end_time)
                         )}
                       </td>
                       <td>
@@ -369,22 +318,22 @@ const DoctorSchedule = () => {
                         {editScheduleId === schedule.id ? (
                           <>
                             <button
+                              className="btn btn-success me-2"
                               onClick={() => handleSave(schedule.id)}
-                              className="btn btn-success btn-sm"
                             >
                               Save
                             </button>
                             <button
+                              className="btn btn-secondary"
                               onClick={handleCancel}
-                              className="btn btn-secondary btn-sm"
                             >
                               Cancel
                             </button>
                           </>
                         ) : (
                           <button
+                            className="btn btn-primary"
                             onClick={() => handleEdit(schedule)}
-                            className="btn btn-primary btn-sm"
                           >
                             Edit
                           </button>
@@ -395,7 +344,14 @@ const DoctorSchedule = () => {
               </tbody>
             </table>
           ) : (
-            <p>No schedules found.</p>
+            <div className="alert alert-info">
+              No schedules available yet.
+            </div>
+          )}
+
+          {error && <div className="alert alert-danger">{error}</div>}
+          {successMessage && (
+            <div className="alert alert-success">{successMessage}</div>
           )}
         </div>
       </div>

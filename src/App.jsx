@@ -15,7 +15,6 @@ import PatientHome from "./pages/patient/PatientHome";
 import ListPatients from "./pages/admin/ListPatients";
 import PatientDetailView from "./pages/admin/PatientDetailView";
 import { useSelector } from "react-redux";
-import DoctorAppointments from "./pages/doctor/DoctorAppoinments";
 import ProfileUpdate from "./pages/patient/ProfileUpdate";
 import PatientProfileCreate from "./pages/patient/PatientProfileCreate";
 import DoctorSchedule from "./pages/doctor/DoctorSchedule";
@@ -31,6 +30,7 @@ import DoctorTransactionHistory from "./pages/doctor/TransactionHistory";
 import VideoCall from "./pages/doctor/VideoCall";
 import TodayAppointments from "./pages/doctor/TodayAppointments";
 import NotificationPage from "./component/NotificatioPage";
+import Chat from "./pages/doctor/Chat";
 
 const App = () => {
   const {isLogged, role} = useSelector((state) => state.auth)
@@ -65,6 +65,7 @@ const App = () => {
           {/* <Route exact path="/doctor/videocall" element={isLogged && role === 'doctor' ?<VideoCall /> : <Navigate to={'/signin'}  />} /> */}
           <Route exact path="/videocall" element={<VideoCall />} />
           <Route exact path="/notification" element={<NotificationPage />} />
+          <Route exact path="/chat" element={<Chat />} />
 
           <Route exact path="/admin"  element={isLogged && role === 'admin' ? <AdminHome /> : <Navigate to={'/signin'} />}/>
           <Route exact path="/admin/list_patients" element={isLogged && role === 'admin' ? <ListPatients /> : <Navigate to={'/signin'} />} />
