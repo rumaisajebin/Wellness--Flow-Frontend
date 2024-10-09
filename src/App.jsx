@@ -27,10 +27,13 @@ import PaymentSuccess from "./pages/patient/PaymentSuccess";
 import PaymentCancel from "./pages/patient/PaymentCancel ";
 import TransactionHistory from "./pages/patient/TransactionHistory";
 import DoctorTransactionHistory from "./pages/doctor/TransactionHistory";
-import VideoCall from "./pages/doctor/VideoCall";
+// import VideoCall from "./pages/doctor/VideoCall";
 import TodayAppointments from "./pages/doctor/TodayAppointments";
 import NotificationPage from "./component/NotificatioPage";
-import Chat from "./pages/doctor/Chat";
+import Chat from "./pages/common/Chat";
+import VideoCall from "./pages/common/VideoCall";
+// import VideoCall from "./pages/common/VideoCall";
+// import Chat from "./pages/doctor/Chat";
 
 const App = () => {
   const {isLogged, role} = useSelector((state) => state.auth)
@@ -62,8 +65,9 @@ const App = () => {
           <Route exact path="/doctor/Confirm-BookingSlots" element={isLogged && role === 'doctor' ?<ConfirmBookingSlots /> : <Navigate to={'/signin'}  />} />
           <Route exact path="/doctor/transactions" element={isLogged && role === 'doctor' ?<DoctorTransactionHistory /> : <Navigate to={'/signin'}  />} />
           <Route exact path="/doctor/todayappointments" element={isLogged && role === 'doctor' ?<TodayAppointments /> : <Navigate to={'/signin'}  />} />
+          
           {/* <Route exact path="/doctor/videocall" element={isLogged && role === 'doctor' ?<VideoCall /> : <Navigate to={'/signin'}  />} /> */}
-          <Route exact path="/videocall" element={<VideoCall />} />
+          <Route exact path="/videocall/:room_name" element={<VideoCall />} />
           <Route exact path="/notification" element={<NotificationPage />} />
           <Route exact path="/chat" element={<Chat />} />
 

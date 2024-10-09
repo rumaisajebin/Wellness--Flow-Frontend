@@ -1,0 +1,60 @@
+.video-call-bg {
+    position: relative; /* Ensure the positioning is set for the pseudo-element */
+    color: rgb(206, 38, 38);
+    overflow: hidden; /* Optional: prevent overflow */
+}
+
+.video-call-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://img.freepik.com/premium-vector/seamless-doodle-with-pandemic-medical-supplies-white-background-vector-illustration-covid-19-vaccination_524299-27.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1; /* Adjust this value to set the desired opacity (0 to 1) */
+    z-index: -2; /* Set z-index to layer the background correctly */
+}
+  .video-frame {
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+  
+  .local-video {
+    width: 120px;
+    height: 90px;
+    bottom: 10px;
+    right: 10px;
+    /* border-radius: 50%; Changed to make it round */
+    border: 2px solid white;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+.remote-video { 
+    /* width: 100px;
+    height: 100px; */
+    border: 2px solid white;
+    background-color: solid white;
+}
+  
+  .btn-lg {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+  }
+  
+  .btn-icon {
+    font-size: 1.5rem; /* Increased icon size */
+    transition: background-color 0.3s;
+  }
+  
+  .btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .alert {
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
