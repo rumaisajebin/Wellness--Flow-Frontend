@@ -1,0 +1,25 @@
+/* Add this to your main CSS file */
+
+/* Style the header background */
+header {
+    background-color: #008080; /* Ensure this matches the inline style */
+  }
+  
+  /* Custom styles for navbar links */
+  .navbar-nav .nav-link {
+    transition: color 0.3s; /* Smooth transition on hover */
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: #ffe600; /* Change color on hover for better visibility */
+  }
+  
+  /* Navbar Toggler Style */
+  .navbar-light .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1); /* Light border color */
+  }
+  
+  .navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' d='M0 7h30M0 15h30M0 23h30'/%3E%3C/svg%3E");
+  }
+  

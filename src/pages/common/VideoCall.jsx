@@ -4,13 +4,8 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams } from "react-router-dom";
-import {
-  FaMicrophone,
-  FaMicrophoneSlash,
-  FaVideo,
-  FaVideoSlash,
-} from "react-icons/fa";
-import "./css/VideoCall.css";
+import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash } from 'react-icons/fa';
+import "./css/VideoCall.css"
 import PatientLayout from "../../component/PatientLayout";
 import DoctorLayout from "../../component/DoctorLayout";
 
@@ -30,7 +25,7 @@ const VideoCall = () => {
   const [remoteUserName, setRemoteUserName] = useState("");
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
-  const { access, role } = useSelector((state) => state.auth);
+  const { access ,role} = useSelector((state) => state.auth);
   console.log("User Role:", role);
   const userInfo = jwtDecode(access);
   const currentUser = userInfo.user_id;
@@ -69,9 +64,7 @@ const VideoCall = () => {
         }
 
         if (message.action === "call") {
-          console.log(
-            `Incoming call from ${message.user.id} with Peer ID: ${message.peer_id}`
-          );
+          console.log(`Incoming call from ${message.user.id} with Peer ID: ${message.peer_id}`);
 
           if (message.user.id !== currentUser) {
             setRemotePeerId(message.peer_id);
@@ -104,9 +97,7 @@ const VideoCall = () => {
           console.log(`${message.user.id} muted their mic.`);
           setIsMicOn(false);
           if (localStream) {
-            localStream
-              .getAudioTracks()
-              .forEach((track) => (track.enabled = false));
+            localStream.getAudioTracks().forEach((track) => (track.enabled = false));
           }
         }
 
@@ -114,22 +105,15 @@ const VideoCall = () => {
           console.log(`${message.user.id} unmuted their mic.`);
           setIsMicOn(true);
           if (localStream) {
-            localStream
-              .getAudioTracks()
-              .forEach((track) => (track.enabled = true));
+            localStream.getAudioTracks().forEach((track) => (track.enabled = true));
           }
         }
 
-        if (
-          message.action === "camera_off" &&
-          message.user.id !== currentUser
-        ) {
+        if (message.action === "camera_off" && message.user.id !== currentUser) {
           console.log(`${message.user.id} turned off their camera.`);
           setIsCameraOn(false);
           if (localStream) {
-            localStream
-              .getVideoTracks()
-              .forEach((track) => (track.enabled = false));
+            localStream.getVideoTracks().forEach((track) => (track.enabled = false));
           }
         }
 
@@ -137,9 +121,7 @@ const VideoCall = () => {
           console.log(`${message.user.id} turned on their camera.`);
           setIsCameraOn(true);
           if (localStream) {
-            localStream
-              .getVideoTracks()
-              .forEach((track) => (track.enabled = true));
+            localStream.getVideoTracks().forEach((track) => (track.enabled = true));
           }
         }
       };
@@ -185,7 +167,7 @@ const VideoCall = () => {
 
   const makeCall = (remotePeerId) => {
     console.log(isInCall, peer, remotePeerId);
-
+    
     if (isInCall || !peer || !remotePeerId) return;
 
     navigator.mediaDevices
@@ -220,12 +202,12 @@ const VideoCall = () => {
   const toggleCamera = () => {
     const newCameraStatus = !isCameraOn;
     setIsCameraOn(newCameraStatus);
-
+    
     if (localStream) {
       localStream.getVideoTracks().forEach((track) => {
         track.enabled = newCameraStatus;
       });
-
+  
       if (videoSocket) {
         videoSocket.send(
           JSON.stringify({
@@ -237,13 +219,11 @@ const VideoCall = () => {
       }
     }
   };
-
+  
   const toggleMic = () => {
     setIsMicOn((prev) => !prev);
     if (localStream) {
-      localStream
-        .getAudioTracks()
-        .forEach((track) => (track.enabled = !track.enabled));
+      localStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
 
       if (videoSocket) {
         videoSocket.send(
@@ -283,69 +263,55 @@ const VideoCall = () => {
     return null;
   };
   const renderVideo = () => {
-    return (
-      <div className="container-fluid d-flex flex-column align-items-center justify-content-center vh-100 video-call-bg">
-        <div
-          className="position-relative w-100"
-          style={{ maxWidth: "800px", aspectRatio: "16/9" }}
-        >
-          <video
-            ref={remoteVideoRef}
-            autoPlay
-            playsInline
-            className="w-100 h-100 video-frame remote-video"
-            // className="w-100 h-100 video-frame"
-          />
-          <video
-            ref={localVideoRef}
-            autoPlay
-            playsInline
-            className="position-absolute local-video"
-          />
-        </div>
+  return (
+    <div className="container-fluid d-flex flex-column align-items-center justify-content-center vh-100 video-call-bg">
+    <div className="position-relative w-100" style={{ maxWidth: '800px', aspectRatio: '16/9' }}>
+      <video
+        ref={remoteVideoRef}
+        autoPlay
+        playsInline
+        className="w-100 h-100 video-frame remote-video"
+        // className="w-100 h-100 video-frame"
+      />
+      <video
+        ref={localVideoRef}
+        autoPlay
+        playsInline
+        className="position-absolute local-video"
+      />
+    </div>
 
-        <div className="mt-3">
-          {callStatus === "waiting" && (
-            <button
-              onClick={() => makeCall(remotePeerId)}
-              className="btn btn-success btn-lg"
-            >
-              Call
-            </button>
-          )}
-          {callStatus === "incoming" && !isInCall && (
-            <div className="alert alert-info">{notification}</div>
-          )}
-          {isInCall && (
-            <div className="d-flex justify-content-center mt-2">
-              <button
-                onClick={toggleMic}
-                className="btn btn-secondary mx-1 btn-icon"
-              >
-                {isMicOn ? <FaMicrophone /> : <FaMicrophoneSlash />}
-              </button>
-              <button
-                onClick={toggleCamera}
-                className="btn btn-secondary mx-1 btn-icon"
-              >
-                {isCameraOn ? <FaVideo /> : <FaVideoSlash />}
-              </button>
-              <button
-                onClick={handleEndCall}
-                className="btn btn-danger mx-1 btn-lg"
-              >
-                End Call
-              </button>
-            </div>
-          )}
-          {notification && (
-            <div className="alert alert-danger mt-2">{notification}</div>
-          )}
+    <div className="mt-3">
+      {callStatus === "waiting" && (
+        <button
+          onClick={() => makeCall(remotePeerId)}
+          className="btn btn-success btn-lg"
+        >
+          Call
+        </button>
+      )}
+      {callStatus === "incoming" && !isInCall && (
+        <div className="alert alert-info">{notification}</div>
+      )}
+      {isInCall && (
+        <div className="d-flex justify-content-center mt-2">
+          <button onClick={toggleMic} className="btn btn-secondary mx-1 btn-icon">
+            {isMicOn ? <FaMicrophone /> : <FaMicrophoneSlash />}
+          </button>
+          <button onClick={toggleCamera} className="btn btn-secondary mx-1 btn-icon">
+            {isCameraOn ? <FaVideo /> : <FaVideoSlash />}
+          </button>
+          <button onClick={handleEndCall} className="btn btn-danger mx-1 btn-lg">
+            End Call
+          </button>
         </div>
-      </div>
-    );
-  };
-  return renderLayout();
+      )}
+      {notification && <div className="alert alert-danger mt-2">{notification}</div>}
+    </div>
+  </div>
+  );
+}
+return renderLayout();
 };
 
 export default VideoCall;

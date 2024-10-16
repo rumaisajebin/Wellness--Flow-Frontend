@@ -13,6 +13,7 @@ import BookingDetailsModal from "./BookingDetailsModal ";
 import { capitalizeFirstLetter } from "../../utils/textUtils";
 import DoctorLayout from "../../component/DoctorLayout";
 import { Button } from "reactstrap"; // Assuming you're using Reactstrap for Button
+import LoadingAnimation from "../../component/LoadingAnimation";
 
 const DoctorTransactionHistory = () => {
   const { access } = useSelector((state) => state.auth);
@@ -154,8 +155,14 @@ const DoctorTransactionHistory = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <>
+        <p>Loading...</p>
+        <LoadingAnimation />
+      </>
+    );
   }
+  
 
   if (error) {
     return <p>{error}</p>;

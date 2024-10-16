@@ -170,7 +170,14 @@ const BookingList = () => {
       booking.status === "canceled"
   );
 
-  if (loading) return <LoadingAnimation />;
+  if (loading) {
+    return (
+      <>
+        <p>Loading...</p>
+        <LoadingAnimation />
+      </>
+    );
+  }
   if (error) return <p>{error}</p>;
 
   return (

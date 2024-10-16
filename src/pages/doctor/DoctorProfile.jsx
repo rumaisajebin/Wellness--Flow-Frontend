@@ -32,14 +32,15 @@ const DoctorProfile = () => {
         <Card>
           <CardBody>
             <Row>
-              <Col md="4">
+              <Col md="4" sm="12" className="text-center">
                 <img
                   src={profile.profile_pic}
                   alt="Profile Pic"
-                  className="profile-pic img-fluid"
+                  className="profile-pic img-fluid rounded"
+                  style={{ borderRadius: "16px" }} // Apply border radius on one side
                 />
               </Col>
-              <Col md="8" className="text-start">
+              <Col md="8" sm="12" className="text-start">
                 <p>
                   <strong>Full Name:</strong> {profile.full_name}
                 </p>
@@ -76,58 +77,62 @@ const DoctorProfile = () => {
                   <strong>Verification Status:</strong>{" "}
                   {profile.is_verify ? "Verified" : "Not Verified"}
                 </p>
-                {/* <p>
-                  <strong>Blocked:</strong> {profile.is_block ? "Yes" : "No"}
-                </p> */}
-                <Button
-                  className="m-1"
-                  color="primary"
-                  href={profile.medical_license_certificate}
-                  download
-                >
-                  Download Medical License Certificate
-                </Button>
-                <Button
-                  className="m-1"
-                  color="primary"
-                  href={profile.identification_document}
-                  download
-                >
-                  Download Identification Document
-                </Button>
-                <Button
-                  className="m-1"
-                  color="primary"
-                  href={profile.certificates_degrees}
-                  download
-                >
-                  Download Certificates/Degrees
-                </Button>
-                <Button
-                  className="m-1"
-                  color="primary"
-                  href={profile.curriculum_vitae}
-                  download
-                >
-                  Download CV
-                </Button>
-                <Button color="primary" href={profile.proof_of_work} download>
-                  Download Proof of Work
-                </Button>
-                <Button
-                  className="m-1"
-                  color="primary"
-                  href={profile.specialization_certificates}
-                  download
-                >
-                  Download Specialization Certificates
-                </Button>
+                <div className="d-flex flex-wrap">
+                  <Button
+                    className="m-1"
+                    color="primary"
+                    href={profile.medical_license_certificate}
+                    download
+                  >
+                    Download Medical License Certificate
+                  </Button>
+                  <Button
+                    className="m-1"
+                    color="primary"
+                    href={profile.identification_document}
+                    download
+                  >
+                    Download Identification Document
+                  </Button>
+                  <Button
+                    className="m-1"
+                    color="primary"
+                    href={profile.certificates_degrees}
+                    download
+                  >
+                    Download Certificates/Degrees
+                  </Button>
+                  <Button
+                    className="m-1"
+                    color="primary"
+                    href={profile.curriculum_vitae}
+                    download
+                  >
+                    Download CV
+                  </Button>
+                  <Button
+                    className="m-1"
+                    color="primary"
+                    href={profile.proof_of_work}
+                    download
+                  >
+                    Download Proof of Work
+                  </Button>
+                  <Button
+                    className="m-1"
+                    color="primary"
+                    href={profile.specialization_certificates}
+                    download
+                  >
+                    Download Specialization Certificates
+                  </Button>
+                </div>
+                <Link to={`/doctor/profile/update`}>
+                  <Button className="m-1" color="primary">
+                    Edit
+                  </Button>
+                </Link>
               </Col>
-              <Link to={`/doctor/profile/update`}>
-                <Button className="m-1" color="primary">
-                  Edit
-                </Button>
-              </Link>
             </Row>
           </CardBody>
         </Card>

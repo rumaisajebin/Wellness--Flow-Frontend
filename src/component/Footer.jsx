@@ -5,7 +5,12 @@ const Footer = () => {
   return (
     <footer
       className="bg-teal  text-white text-center p-4 mt-auto"
-      style={{ backgroundColor: "#008080" }}
+      style={{
+        backgroundColor: "#008080",
+        position: "relative" /* Adjust position */,
+        bottom: "5" /* Ensure it's at the bottom */,
+        width: "100%" /* Footer spans the full width */,
+      }}
     >
       <div className="container ">
         <div className="row">
