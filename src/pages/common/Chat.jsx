@@ -45,7 +45,7 @@ const Chat = () => {
       console.log("Connecting to room:", room_name);
 
       chatSocket.current = new WebSocket(
-        `ws://127.0.0.1:8000/ws/chat/${room_name}/`
+        `wss://127.0.0.1:8000/ws/chat/${room_name}/`
       );
 
       chatSocket.current.onopen = () => {

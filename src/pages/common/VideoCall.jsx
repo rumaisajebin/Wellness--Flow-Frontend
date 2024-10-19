@@ -38,7 +38,7 @@ const VideoCall = () => {
       setLocalPeerId(id);
 
       const socket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/video-call/${room_name}/${currentUser}/`
+        `wss://127.0.0.1:8000/ws/video-call/${room_name}/${currentUser}/`
       );
 
       setVideoSocket(socket);
