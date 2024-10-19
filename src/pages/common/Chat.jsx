@@ -45,7 +45,7 @@ const Chat = () => {
       console.log("Connecting to room:", room_name);
 
       chatSocket.current = new WebSocket(
-        `wss://127.0.0.1:8000/ws/chat/${room_name}/`
+        `wss://wellness-flow-frontend.onrender.com/ws/chat/${room_name}/`
       );
 
       chatSocket.current.onopen = () => {
