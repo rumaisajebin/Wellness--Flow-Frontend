@@ -38,7 +38,7 @@ const VideoCall = () => {
       setLocalPeerId(id);
 
       const socket = new WebSocket(
-        `wss://wellness-flow-frontend.onrender.com/ws/video-call/${room_name}/${currentUser}/`
+        `wss://rareblu.shop/ws/video-call/${room_name}/${currentUser}/`
       );
 
       setVideoSocket(socket);
