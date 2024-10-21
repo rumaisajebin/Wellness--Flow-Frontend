@@ -47,7 +47,7 @@ const Chat = () => {
       chatSocket.current = new WebSocket(
         `wss://rareblu.shop/ws/chat/${room_name}/`
       );
-      console.log("Connecting to WebSocket at: ", `wss://rareblu.shop/ws/chat/${room_name}/`);
+      // console.log("Connecting to WebSocket at: ", `wss://rareblu.shop/ws/chat/${room_name}/`);
       chatSocket.current.onopen = () => {
         setIsSocketOpen(true);
       };
