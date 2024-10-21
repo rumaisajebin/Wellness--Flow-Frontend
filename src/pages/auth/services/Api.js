@@ -1,9 +1,11 @@
 // service/api.js
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { BASE_URL } from '../../../axiosConfig';
 
 const API = axios.create({
-  baseURL: 'http://127.0.0.1:8000/', // Replace with your API base URL
+  // BASE_URL
+   baseURL: BASE_URL, // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
   },

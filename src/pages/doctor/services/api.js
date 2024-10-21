@@ -1,9 +1,9 @@
 import axios from "axios";
+import { BASE_URL } from "../../../axiosConfig";
 
-const Base_URL = "http://127.0.0.1:8000/"
 
 const axiosIn = axios.create({
-    baseURL: Base_URL,
+    baseURL: BASE_URL,
 })
 
 export const docProfile = async (token) => {
