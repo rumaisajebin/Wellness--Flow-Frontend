@@ -1,6 +1,6 @@
 const roomName = "room1"; // dynamically generate or retrieve room name
 const chatSocket = new WebSocket(
-    'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    'wss://' + window.location.host + '/ws/chat/' + roomName + '/'
 );
 
 chatSocket.onmessage = function(e) {
