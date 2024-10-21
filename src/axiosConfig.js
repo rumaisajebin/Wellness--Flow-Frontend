@@ -1,6 +1,6 @@
 import { loadStripe } from "@stripe/stripe-js";
 
-export const BASE_URL = "http://rareblu.shop/";
+export const BASE_URL = "https://rareblu.shop/";
 // export const BASE_URL = "http://127.0.0.1:8000/";
 
 export const PAYMENT_URL =
