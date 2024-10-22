@@ -23,6 +23,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form data being submitted:", formData);
     try {
       const res = await dispatch(signupUser(formData));
       navigate('/signin')
