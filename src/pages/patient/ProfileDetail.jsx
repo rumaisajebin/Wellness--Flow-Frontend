@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const ProfileDetail = () => {
   const token = useSelector((state) => state.auth.access);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,14 +48,19 @@ const ProfileDetail = () => {
   if (error) return <div>{error}</div>;
 
   // Check if all profile fields are empty
-  const isProfileEmpty = profile && Object.values(profile).every(field => !field);
+  const isProfileEmpty =
+    profile &&
+    Object.values(profile).every((field) => !field || field.trim() === "");
 
   if (isProfileEmpty) {
     return (
       <PatientLayout>
         <div className="container mt-5 text-center">
           <p>No profile data available. Would you like to create a profile?</p>
-          <Button color="primary"  onClick={() => navigate("/patient/profile/create")}>
+          <Button
+            color="primary"
+            onClick={() => navigate("/patient/profile/create")}
+          >
             Create Profile
           </Button>
         </div>
