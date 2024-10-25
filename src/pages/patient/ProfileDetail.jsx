@@ -52,6 +52,9 @@ const ProfileDetail = () => {
     (field) => !field || (typeof field === "string" && field.trim() === "")
   );
   
+  console.log("Is profile empty:", isProfileEmpty); // Log profile empty status
+  console.log("Profile data:", profile); // Log full profile data
+
   if (isProfileEmpty) {
     return (
       <PatientLayout>
