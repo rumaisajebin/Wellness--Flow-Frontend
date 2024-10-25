@@ -46,15 +46,19 @@ const ProfileDetail = () => {
 
   if (loading) return <LoadingAnimation />;
   if (error) return <div>{error}</div>;
+  const requiredFields = ["full_name", "date_of_birth", "age", "phone_number", "gender", "address", "profile_pic"];
 
-  // Check if all profile fields are empty
-  const isProfileEmpty = profile && Object.values(profile).every(
-    (field) => !field || (typeof field === "string" && field.trim() === "")
-  );
+  // Check if all required fields in the profile are populated
+  const isProfileEmpty = profile && requiredFields.every((field) => {
+    const value = profile[field];
+    return value === null || value === "" || (typeof value === "string" && value.trim() === "");
+  });
   
-  console.log("Is profile empty:", isProfileEmpty); // Log profile empty status
-  console.log("Profile data:", profile); // Log full profile data
-
+  useEffect(() => {
+    console.log("Is profile empty:", isProfileEmpty); // Log profile empty status
+    console.log("Profile data:", profile); // Log full profile data
+  }, [profile, isProfileEmpty]);
+  
   if (isProfileEmpty) {
     return (
       <PatientLayout>
@@ -70,6 +74,7 @@ const ProfileDetail = () => {
       </PatientLayout>
     );
   }
+  
 
   return (
     <PatientLayout>
