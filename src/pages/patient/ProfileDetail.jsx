@@ -48,10 +48,10 @@ const ProfileDetail = () => {
   if (error) return <div>{error}</div>;
 
   // Check if all profile fields are empty
-  const isProfileEmpty =
-    profile &&
-    Object.values(profile).every((field) => !field || field.trim() === "");
-
+  const isProfileEmpty = profile && Object.values(profile).every(
+    (field) => !field || (typeof field === "string" && field.trim() === "")
+  );
+  
   if (isProfileEmpty) {
     return (
       <PatientLayout>
