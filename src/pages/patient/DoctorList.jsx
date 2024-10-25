@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import PatientLayout from "../../component/PatientLayout";
+import { BASE_URL } from "../../axiosConfig";
 
-const BASE_URL = "http://127.0.0.1:8000/patient";
 
 const DoctorList = () => {
   const { access } = useSelector((state) => state.auth);
@@ -28,7 +28,7 @@ const DoctorList = () => {
       if (access) {
         try {
           const response = await axios.get(
-            `${BASE_URL}/doctor-profiles/verified/`,
+            `${BASE_URL}patient/doctor-profiles/verified/`,
             {
               headers: {
                 Authorization: `Bearer ${access}`,
