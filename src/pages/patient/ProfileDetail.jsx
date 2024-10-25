@@ -5,11 +5,9 @@ import { Card, CardBody, Row, Col, Button } from "reactstrap";
 import Layout from "../../component/Layout";
 import PatientLayout from "../../component/PatientLayout";
 import LoadingAnimation from "../../component/LoadingAnimation";
-import { useNavigate } from "react-router-dom";
 
 const ProfileDetail = () => {
   const token = useSelector((state) => state.auth.access);
-  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,37 +42,11 @@ const ProfileDetail = () => {
     }
   }, [id]);
 
-  if (loading) return <LoadingAnimation />;
+  if (loading) return (
+    <LoadingAnimation /> 
+);
   if (error) return <div>{error}</div>;
-  const requiredFields = ["full_name", "date_of_birth", "age", "phone_number", "gender", "address", "profile_pic"];
-
-  // Check if all required fields in the profile are populated
-  const isProfileEmpty = profile && requiredFields.every((field) => {
-    const value = profile[field];
-    return value === null || value === "" || (typeof value === "string" && value.trim() === "");
-  });
-  
-  useEffect(() => {
-    console.log("Is profile empty:", isProfileEmpty); // Log profile empty status
-    console.log("Profile data:", profile); // Log full profile data
-  }, [profile, isProfileEmpty]);
-  
-  if (isProfileEmpty) {
-    return (
-      <PatientLayout>
-        <div className="container mt-5 text-center">
-          <p>No profile data available. Would you like to create a profile?</p>
-          <Button
-            color="primary"
-            onClick={() => navigate("/patient/profile/create")}
-          >
-            Create Profile
-          </Button>
-        </div>
-      </PatientLayout>
-    );
-  }
-  
+  if (!profile) return <div>No profile data available</div>;
 
   return (
     <PatientLayout>
@@ -87,7 +59,7 @@ const ProfileDetail = () => {
                   <img
                     src={profile.profile_pic}
                     alt="Profile Pic"
-                    className="img-fluid"
+                    className="img-fluid "
                   />
                 )}
               </Col>
@@ -118,6 +90,12 @@ const ProfileDetail = () => {
                   Download Profile Picture
                 </Button>
               )} */}
+
+                {/* <Link to={`/profile/update`}>
+                <Button className="m-1" color="primary">
+                  Edit Profile
+                </Button>
+              </Link> */}
               </Col>
             </Row>
           </CardBody>
