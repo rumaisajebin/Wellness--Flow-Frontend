@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { Table, FormGroup, Label, Input } from "reactstrap";
 import {jwtDecode} from "jwt-decode";
 import DoctorLayout from "../../component/DoctorLayout";
 import { capitalizeFirstLetter } from "../../utils/textUtils";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance } from "../../axiosConfig";
 
 const ConfirmBookingSlots = () => {
   const { access } = useSelector((state) => state.auth);
@@ -17,8 +16,8 @@ const ConfirmBookingSlots = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}appoinment/bookings/?doctor=${userId}`,
+        const response = await axiosInstance.get(
+          `appoinment/bookings/?doctor=${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -46,8 +45,8 @@ const ConfirmBookingSlots = () => {
       if (!bookingId) {
         throw new Error("Booking ID is required.");
       }
-      await axios.patch(
-        `${BASE_URL}appoinment/bookings/${bookingId}/update_status/`,
+      await axiosInstance.patch(
+        `appoinment/bookings/${bookingId}/update_status/`,
         { status: newStatus },
         {
           headers: {

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import { axiosInstance } from "../axiosConfig";
 
 const NotificationPage = () => {
   const [notifications, setNotifications] = useState([]);
   const { access } = useSelector((state) => state.auth);
 
   const fetchNotifications = async () => {
-    const response = await axios.get(
-      "http://127.0.0.1:8000/account/notifications/",
+    const response = await axiosInstance.get(
+      "account/notifications/",
       {
         headers: {
           Authorization: `Bearer ${access}`,

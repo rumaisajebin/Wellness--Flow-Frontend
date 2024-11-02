@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance } from "../../axiosConfig";
 import { useSelector } from "react-redux";
 import {
   useReactTable,
@@ -27,7 +26,7 @@ const TransactionHistory = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}patient/transactions/`, {
+        const response = await axiosInstance.get(`patient/transactions/`, {
           headers: {
             Authorization: `Bearer ${access}`,
           },
@@ -35,8 +34,8 @@ const TransactionHistory = () => {
         console.log(response.data);
         setTransactions(response.data);
 
-        const userResponse = await axios.get(
-          `${BASE_URL}patient/patient-profiles/`,
+        const userResponse = await axiosInstance.get(
+          `patient/patient-profiles/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,

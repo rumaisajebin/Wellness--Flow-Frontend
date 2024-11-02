@@ -8,10 +8,9 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance, BASE_URL } from "../../axiosConfig";
 import DoctorLayout from "../../component/DoctorLayout";
 import { capitalizeFirstLetter } from "../../utils/textUtils";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 const TodayAppointments = () => {
@@ -70,7 +69,7 @@ const TodayAppointments = () => {
   const fetchConfirmedBookings = async () => {
     setLoading(true); // Set loading state to true
     try {
-      const response = await axios.get(`${BASE_URL}appoinment/bookings/`, {
+      const response = await axiosInstance.get(`appoinment/bookings/`, {
         headers: {
           Authorization: `Bearer ${access}`,
         },

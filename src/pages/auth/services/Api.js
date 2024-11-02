@@ -1,19 +1,11 @@
-// service/api.js
-import axios from 'axios';
+// service/axiosInstance.js
 import Swal from 'sweetalert2';
-import { BASE_URL } from '../../../axiosConfig';
+import { axiosInstance } from '../../../axiosConfig';
 
-const API = axios.create({
-  // BASE_URL
-   baseURL: BASE_URL, // Replace with your API base URL
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
 
 export const signup = async (userData) => {
   try {
-    const response = await API.post('account/signup/', userData);
+    const response = await axiosInstance.post('account/signup/', userData);
     Swal.fire({
       title: "Account created successfully",
       text: "Your acount created successfully. \nPlease verify your account by the link that we send to your mail!",
@@ -33,7 +25,7 @@ export const signup = async (userData) => {
 
 export const login = async (credentials) => {
   try {
-    const response = await API.post('account/signin/', credentials);
+    const response = await axiosInstance.post('account/signin/', credentials);
     console.log(response.data);
 
     Swal.fire({
@@ -63,7 +55,7 @@ export const login = async (credentials) => {
 
 export const fetchProfile = async (token) => {
   try {
-    const response = await API.get('account/profile/', {
+    const response = await axiosInstance.get('account/profile/', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -79,7 +71,7 @@ export const fetchProfile = async (token) => {
 export const updateProfile = async (userData, token) => {
   try {
     console.log("UPDATE", userData, token);
-    const response = await API.put('account/profile/', userData, {
+    const response = await axiosInstance.put('account/profile/', userData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -92,6 +84,6 @@ export const updateProfile = async (userData, token) => {
   }
 };
 
-// Add other API calls as needed
+// Add other axiosInstance calls as needed
 
-export default API;
+export default axiosInstance;

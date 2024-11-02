@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import PatientLayout from "../../component/PatientLayout";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance } from "../../axiosConfig";
 
 
 const DoctorList = () => {
@@ -27,8 +26,8 @@ const DoctorList = () => {
     const fetchDoctors = async () => {
       if (access) {
         try {
-          const response = await axios.get(
-            `${BASE_URL}patient/doctor-profiles/verified/`,
+          const response = await axiosInstance.get(
+            `patient/doctor-profiles/verified/`,
             {
               headers: {
                 Authorization: `Bearer ${access}`,
@@ -36,6 +35,8 @@ const DoctorList = () => {
             }
           );
           setDoctors(response.data);
+          console.log(doctors);
+          
         } catch (err) {
           setError(err.message || "Error fetching doctors");
         }

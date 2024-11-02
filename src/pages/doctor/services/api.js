@@ -1,14 +1,10 @@
 import axios from "axios";
-import { BASE_URL } from "../../../axiosConfig";
+import { axiosInstance } from "../../../axiosConfig";
 
-
-const axiosIn = axios.create({
-    baseURL: BASE_URL,
-})
 
 export const docProfile = async (token) => {
   try {
-    const response = await axiosIn.get(`doctor/doctor-profiles/`, {
+    const response = await axiosInstance.get(`doctor/doctor-profiles/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -22,7 +18,7 @@ export const docProfile = async (token) => {
 export const uploadDoctorDocs = async (docId, formData, token) => {
   try {
     console.log(docId, formData, token);
-    const response = await axiosIn.put(`doctor/doctor-profiles/${docId}/`,
+    const response = await axiosInstance.put(`doctor/doctor-profiles/${docId}/`,
       formData,
       {
         headers: {
@@ -40,7 +36,7 @@ export const uploadDoctorDocs = async (docId, formData, token) => {
 export const updateDoctorDocs = async (docId, formData, token) => {
   try {
     console.log(docId, formData, token);
-    const response = await axiosIn.patch(`doctor/doctor-profiles/${docId}/`,
+    const response = await axiosInstance.patch(`doctor/doctor-profiles/${docId}/`,
       formData,
       {
         headers: {

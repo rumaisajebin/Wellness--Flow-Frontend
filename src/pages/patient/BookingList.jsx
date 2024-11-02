@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import PatientLayout from "../../component/PatientLayout";
 import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, FormGroup, Label } from "reactstrap";
 import Swal from "sweetalert2";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance } from "../../axiosConfig";
 import LoadingAnimation from "../../component/LoadingAnimation";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode
@@ -53,7 +52,7 @@ const BookingList = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}appoinment/bookings/`, {
+        const response = await axiosInstance.get(`appoinment/bookings/`, {
           headers: {
             Authorization: `Bearer ${access}`,
           },
@@ -83,8 +82,8 @@ const BookingList = () => {
           booking.status !== "canceled"
         ) {
           try {
-            const response = await axios.get(
-              `${BASE_URL}appoinment/bookings/expected_consulting_time/?doctor=${booking.doctor}&date=${booking.schedule_date}`,
+            const response = await axiosInstance.get(
+              `appoinment/bookings/expected_consulting_time/?doctor=${booking.doctor}&date=${booking.schedule_date}`,
               {
                 headers: {
                   Authorization: `Bearer ${access}`,
@@ -113,8 +112,8 @@ const BookingList = () => {
 
   const submitCancelBooking = async () => {
     try {
-      await axios.post(
-        `${BASE_URL}appoinment/bookings/${cancelBookingId}/cancel_booking/`,
+      await axiosInstance.post(
+        `appoinment/bookings/${cancelBookingId}/cancel_booking/`,
         { status: "canceled", cancel_reason: cancelReason }, // Pass the cancel reason
         {
           headers: {

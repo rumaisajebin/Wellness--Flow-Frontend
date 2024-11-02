@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
@@ -8,7 +7,7 @@ import Swal from "sweetalert2";
 import PatientLayout from "../../component/PatientLayout";
 import { jwtDecode } from "jwt-decode";
 import "./css/DoctorView.css";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance } from "../../axiosConfig";
 import { formatTimeTo12Hour } from "../../utils/textUtils";
 
 const DoctorView = () => {
@@ -41,8 +40,8 @@ const DoctorView = () => {
   useEffect(() => {
     const fetchDoctorDetails = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}patient/doctor-profiles/${doctorId}/`,
+        const response = await axiosInstance.get(
+          `patient/doctor-profiles/${doctorId}/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -57,8 +56,8 @@ const DoctorView = () => {
 
     const fetchAvailableSlots = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}patient/doctor-profiles/${doctorId}/slots/`,
+        const response = await axiosInstance.get(
+          `patient/doctor-profiles/${doctorId}/slots/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -75,8 +74,8 @@ const DoctorView = () => {
 
     const fetchUserBookings = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}appoinment/bookings/?user_id=${userId}`,
+        const response = await axiosInstance.get(
+          `appoinment/bookings/?user_id=${userId}`,
           {
             headers: {
               Authorization: `Bearer ${access}`,

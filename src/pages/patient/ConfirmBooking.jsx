@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import PatientLayout from "../../component/PatientLayout";
 import { jwtDecode } from "jwt-decode";
-import { BASE_URL, PAYMENT_URL, stripePromise } from "../../axiosConfig";
+import { axiosInstance, PAYMENT_URL, stripePromise } from "../../axiosConfig";
 
 
 const ConfirmBooking = () => {
@@ -39,8 +39,8 @@ const ConfirmBooking = () => {
   useEffect(() => {
     const fetchExpectedConsultingTime = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}appoinment/bookings/expected_consulting_time/?doctor=${doctor.user.id}&date=${formattedDate}`,
+        const response = await axiosInstance.get(
+          `appoinment/bookings/expected_consulting_time/?doctor=${doctor.user.id}&date=${formattedDate}`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -56,8 +56,8 @@ const ConfirmBooking = () => {
 
     const fetchWalletBalance = async () => {
       try {
-        const userResponse = await axios.get(
-          `${BASE_URL}patient/patient-profiles/`,
+        const userResponse = await axiosInstance.get(
+          `patient/patient-profiles/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -89,8 +89,8 @@ const ConfirmBooking = () => {
     console.log("Booking data:", formData);
     try {
       // Confirm booking
-      const bookingResponse = await axios.post(
-        `${BASE_URL}appoinment/bookings/`,
+      const bookingResponse = await axiosInstance.post(
+        `appoinment/bookings/`,
         formData,
         {
           headers: {

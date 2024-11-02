@@ -1,12 +1,11 @@
-import axios from "axios";
-import { BASE_URL } from "../../../axiosConfig";
+import { axiosInstance } from "../../../axiosConfig";
 
 // Adjust the base URL according to your setup
 
 
 export const fetchAllPatients = async (accessToken) => {
   try {
-    const response = await axios.get(`${BASE_URL}admin_side/patients/`, {
+    const response = await axiosInstance.get(`admin_side/patients/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -22,7 +21,7 @@ export const fetchAllPatients = async (accessToken) => {
 
 export const fetchPatientById = async (id, accessToken) => {
   try {
-    const response = await axios.get(`${BASE_URL}admin_side/patients/${id}/`, {
+    const response = await axiosInstance.get(`admin_side/patients/${id}/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -37,7 +36,7 @@ export const fetchPatientById = async (id, accessToken) => {
 
 export const fetchAllDoctors = async (accessToken) => {
   try {
-    const response = await axios.get(`${BASE_URL}admin_side/doctors/`, {
+    const response = await axiosInstance.get(`admin_side/doctors/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -51,7 +50,7 @@ export const fetchAllDoctors = async (accessToken) => {
 
 export const fetchDoctorById = async (id, accessToken) => {
   try {
-    const response = await axios.get(`${BASE_URL}admin_side/doctors/${id}/`, {
+    const response = await axiosInstance.get(`admin_side/doctors/${id}/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -65,8 +64,8 @@ export const fetchDoctorById = async (id, accessToken) => {
 
 export const blockUnblockDoctor = async (id, action, accessToken) => {
   try {
-    await axios.post(
-      `${BASE_URL}admin_side/doctors/${id}/block/`,
+    await axiosInstance.post(
+      `admin_side/doctors/${id}/block/`,
       { action }, // Send the action as a string
       {
         headers: {
@@ -88,8 +87,8 @@ export const updateDoctorStatus = async (
   rejectionReason = ""
 ) => {
   try {
-    await axios.post(
-      `${BASE_URL}admin_side/doctors/${id}/verify/`,
+    await axiosInstance.post(
+      `admin_side/doctors/${id}/verify/`,
       { status, reason: rejectionReason }, // Include the reason here
       {
         headers: {
@@ -105,8 +104,8 @@ export const updateDoctorStatus = async (
 
 export const blockUnblockPatient = async (id, action, accessToken) => {
   try {
-    await axios.post(
-      `${BASE_URL}admin_side/patients/${id}/block-unblock/`,
+    await axiosInstance.post(
+      `admin_side/patients/${id}/block-unblock/`,
       { action },
       {
         headers: {
@@ -122,8 +121,8 @@ export const blockUnblockPatient = async (id, action, accessToken) => {
 
 export const fetchVerificationChoices = async (accessToken) => {
   try {
-    const response = await axios.get(
-      `${BASE_URL}admin_side/doctors/verification-choices/`,
+    const response = await axiosInstance.get(
+      `admin_side/doctors/verification-choices/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

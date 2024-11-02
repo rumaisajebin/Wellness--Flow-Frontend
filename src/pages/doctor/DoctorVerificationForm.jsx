@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import Swal from "sweetalert2";
 import { isTokenValid } from "../../utils/auth";
-import { BASE_URL } from "../../axiosConfig"; // Ensure this path is correct
 import { useSelector } from "react-redux";
 import { docProfile, uploadDoctorDocs } from "./services/api";
 

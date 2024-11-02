@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import DoctorLayout from "../../component/DoctorLayout";
-import { BASE_URL } from "../../axiosConfig";
 import { formatTimeTo12Hour } from "../../utils/textUtils";
+import { axiosInstance } from "../../axiosConfig";
 
 const DoctorSchedule = () => {
   const { access } = useSelector((state) => state.auth);
@@ -35,11 +34,10 @@ const DoctorSchedule = () => {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}appoinment/DoctorSchedule/?doctor=${userId}`,
+        const response = await axiosInstance.get(
+          `appoinment/DoctorSchedule/?doctor=${userId}`,
           {
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${access}`,
             },
           }
@@ -78,12 +76,11 @@ const DoctorSchedule = () => {
     };
 
     try {
-      const response = await axios.post(
-        `${BASE_URL}appoinment/DoctorSchedule/`,
+      const response = await axiosInstance.post(
+        `appoinment/DoctorSchedule/`,
         dataToSend,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${access}`,
           },
         }
@@ -129,12 +126,11 @@ const DoctorSchedule = () => {
     };
 
     try {
-      const response = await axios.put(
-        `${BASE_URL}/DoctorSchedule/${id}/`,
+      const response = await axiosInstance.put(
+        `/DoctorSchedule/${id}/`,
         dataToUpdate,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${access}`,
           },
         }

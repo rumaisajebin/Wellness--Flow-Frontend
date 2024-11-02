@@ -1,10 +1,9 @@
-import axios from "axios";
-import { BASE_URL } from "../../../axiosConfig";
+import { axiosInstance } from "../../../axiosConfig";
 
 // Get profile ID for the current user
 export const getProfileId = async (token) => {
   try {
-    const response = await axios.get(`${BASE_URL}patient/patient-profiles/`, {
+    const response = await axiosInstance.get(`patient/patient-profiles/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data[0]; // Return the first profile
@@ -16,7 +15,7 @@ export const getProfileId = async (token) => {
 // Get profile details by ID
 export const getProfile = async (id, token) => {
   try {
-    const response = await axios.get(`${BASE_URL}patient/patient-profiles/${id}/`, {
+    const response = await axiosInstance.get(`patient/patient-profiles/${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -28,7 +27,7 @@ export const getProfile = async (id, token) => {
 // Update profile by ID
 export const updateProfile = async (id, profileData, token) => {
   try {
-    const response = await axios.put(`${BASE_URL}patient/patient-profiles/${id}/`, profileData, {
+    const response = await axiosInstance.put(`patient/patient-profiles/${id}/`, profileData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -40,7 +39,7 @@ export const updateProfile = async (id, profileData, token) => {
 // Create new profile
 export const createProfile = async (profileData, token) => {
   try {
-    const response = await axios.post(`${BASE_URL}patient/patient-profiles/`, profileData, {
+    const response = await axiosInstance.post(`patient/patient-profiles/`, profileData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

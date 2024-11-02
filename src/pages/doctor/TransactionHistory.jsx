@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
-import { BASE_URL } from "../../axiosConfig";
 import { useSelector } from "react-redux";
 import {
   useReactTable,
@@ -14,6 +12,7 @@ import { capitalizeFirstLetter } from "../../utils/textUtils";
 import DoctorLayout from "../../component/DoctorLayout";
 import { Button } from "reactstrap"; // Assuming you're using Reactstrap for Button
 import LoadingAnimation from "../../component/LoadingAnimation";
+import { axiosInstance } from "../../axiosConfig";
 
 const DoctorTransactionHistory = () => {
   const { access } = useSelector((state) => state.auth);
@@ -30,7 +29,7 @@ const DoctorTransactionHistory = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}doctor/transactions/`, {
+        const response = await axiosInstance.get(`doctor/transactions/`, {
           headers: {
             Authorization: `Bearer ${access}`,
           },
@@ -45,8 +44,8 @@ const DoctorTransactionHistory = () => {
         );
         setTotalEarnings(total);
   
-        const userResponse = await axios.get(
-          `${BASE_URL}doctor/doctor-profiles/`,
+        const userResponse = await axiosInstance.get(
+          `doctor/doctor-profiles/`,
           {
             headers: {
               Authorization: `Bearer ${access}`,

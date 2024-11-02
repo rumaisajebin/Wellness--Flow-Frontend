@@ -1,9 +1,8 @@
-import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-import { BASE_URL } from "../../axiosConfig";
+import { axiosInstance } from "../../axiosConfig";
 import { useSelector } from "react-redux";
 
 const PaymentSuccess = () => {
@@ -19,9 +18,9 @@ const PaymentSuccess = () => {
     if (sessionId && bookingId && !hasCalledApi.current) { // Check if API was already called
       hasCalledApi.current = true; // Set ref to true to prevent further calls
 
-      axios
+      axiosInstance
         .get(
-          `${BASE_URL}payment/payments/payment_success/?session_id=${sessionId}&booking_id=${bookingId}`,
+          `payment/payments/payment_success/?session_id=${sessionId}&booking_id=${bookingId}`,
           {
             headers: {
               Authorization: `Bearer ${access}`,
